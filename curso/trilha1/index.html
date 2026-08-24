@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilha 1 — Fundamentos da Linguagem | INEMA Command Language</title>
+  <meta name="inema-course" content="inema-dsl">
+
+  <!-- ANTI-FOUC -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') { for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k]; }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = {
+        'inema-dark': { dark: true, attr: null, cs: 'dark' },
+        'claro': { dark: false, attr: null, cs: 'light' },
+        'sepia': { dark: false, attr: 'sepia', cs: 'light' },
+        'foco': { dark: null, attr: 'foco', cs: null },
+        'contraste': { dark: true, attr: 'contraste', cs: 'dark' }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system' ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura' ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif' : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald: [152,76,45], blue: [217,91,60], purple: [258,90,66], amber: [38,92,50], teal: [174,72,41], rose: [350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + ''); s.setProperty('--accent-s', a[1] + '%'); s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+
+  <script type="application/json" data-inema-manifest>
+{"course":"inema-dsl","tracks":[
+{"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
+{"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
+{"n":"3","title":"Crítica & Decisão","modules":[{"id":"3-1","title":"Red team e robustez","topics":8,"href":"curso/trilha3/modulo-3-1.html"},{"id":"3-2","title":"Comparação e decisão","topics":8,"href":"curso/trilha3/modulo-3-2.html"}]},
+{"n":"4","title":"Plano & Execução","modules":[{"id":"4-1","title":"Planejamento e arquitetura","topics":8,"href":"curso/trilha4/modulo-4-1.html"},{"id":"4-2","title":"Execução e operações","topics":8,"href":"curso/trilha4/modulo-4-2.html"}]},
+{"n":"5","title":"Negócio & IA aplicada","modules":[{"id":"5-1","title":"Produto, negócios e monetização","topics":8,"href":"curso/trilha5/modulo-5-1.html"},{"id":"5-2","title":"Prototipagem e agentes de IA","topics":8,"href":"curso/trilha5/modulo-5-2.html"}]},
+{"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
+]}
+</script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 100; background: #111827; color: #FACC15; padding: .5rem 1rem; border-radius: .5rem; }
+    .skip:focus { left: .5rem; top: .5rem; }
+    [id] { scroll-margin-top: 88px; }
+    :focus-visible { outline: 3px solid var(--accent-2, #38bdf8); outline-offset: 2px; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - acentos emerald (trilha 1) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-300:hover { color: #047857; }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🧭</span>
+            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+          <span class="text-neutral-600">-</span>
+          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Sua jornada no curso">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
+          </button>
+          <a href="index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="../trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span>
+          </a>
+          <a href="../trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span>
+          </a>
+          <a href="../trilha4/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors hidden lg:inline-flex">Plano</a>
+          <a href="../trilha5/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors hidden lg:inline-flex">Negócio</a>
+          <a href="../trilha6/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors hidden xl:inline-flex">Maestria</a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+
+    <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">TRILHA 1</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🧭 Fundamentos da Linguagem</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl mb-2" data-inema-block="t1-hero-p1">
+          A gramática que sustenta os 100 comandos: sintaxe, regras, cadeias e presets — e a família
+          de <strong class="text-emerald-400">verdade e verificação</strong> que separa fato de palpite antes de qualquer decisão.
+        </p>
+        <p class="text-neutral-500 max-w-3xl">Ao fim da trilha você escreve comandos compostos com parâmetros, encadeia protocolos com <code class="font-mono text-sm text-sky-400">/chain</code> e audita qualquer afirmação com o núcleo de verdade.</p>
+
+        <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">2</div><div class="text-xs text-neutral-400">Módulos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">15</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">~2h20</div><div class="text-xs text-neutral-400">Duração</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Básico</div><div class="text-xs text-neutral-400">Nível</div></div>
+        </div>
+        <div data-inema-meter="trilha:1" class="inema-meter mt-6 max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 1">
+          <div class="flex items-center gap-3">
+            <span class="text-emerald-400 font-bold w-12" data-inema-meter-pct>0%</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 15</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO SVG -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+      <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 overflow-hidden">
+        <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="Um objetivo entra pela esquerda, é processado em paralelo por comandos da linguagem como /truth, /research e /rank desenhados em ciano, e sai à direita como execução controlada com confiança declarada">
+          <defs>
+            <linearGradient id="t1-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+            <filter id="t1-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <pattern id="t1-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+            <marker id="t1-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"/></marker>
+            <marker id="t1-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+          </defs>
+          <rect x="0" y="0" width="1000" height="240" fill="url(#t1-grid)"/>
+          <g fill="none" stroke="#34d399" stroke-width="1.8" opacity="0.55">
+            <path d="M196,120 C300,120 320,38 452,38" marker-end="url(#t1-ah)"/>
+            <path d="M196,120 C300,120 320,79 452,79" marker-end="url(#t1-ah)"/>
+            <path d="M196,120 L452,120" marker-end="url(#t1-ah)"/>
+            <path d="M196,120 C300,120 320,161 452,161" marker-end="url(#t1-ah)"/>
+            <path d="M196,120 C300,120 320,202 452,202" marker-end="url(#t1-ah)"/>
+          </g>
+          <g fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.5">
+            <path d="M588,38  C700,38 720,120 800,120" marker-end="url(#t1-ahc)"/>
+            <path d="M588,79  C700,79 720,120 800,120" marker-end="url(#t1-ahc)"/>
+            <path d="M588,120 L800,120" marker-end="url(#t1-ahc)"/>
+            <path d="M588,161 C700,161 720,120 800,120" marker-end="url(#t1-ahc)"/>
+            <path d="M588,202 C700,202 720,120 800,120" marker-end="url(#t1-ahc)"/>
+          </g>
+          <g filter="url(#t1-glow)"><rect x="40" y="86" width="156" height="68" rx="14" fill="#0e2018" stroke="url(#t1-grad)" stroke-width="2"/></g>
+          <text x="118" y="114" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-weight="600" font-size="19">Seu objetivo</text>
+          <text x="118" y="136" text-anchor="middle" fill="#a7f3d0" font-family="Inter,sans-serif" font-size="12.5">em linguagem natural</text>
+          <g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+            <g class="wf-a"><rect x="452" y="22" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="43" text-anchor="middle" fill="#bfe6ff">/truth</text></g>
+            <g class="wf-a"><rect x="452" y="63" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="84" text-anchor="middle" fill="#bfe6ff">/research</text></g>
+            <g class="wf-a"><rect x="452" y="104" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="125" text-anchor="middle" fill="#bfe6ff">/analyze</text></g>
+            <g class="wf-a"><rect x="452" y="145" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="166" text-anchor="middle" fill="#bfe6ff">/rank</text></g>
+            <g class="wf-a"><rect x="452" y="186" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="207" text-anchor="middle" fill="#bfe6ff">/decide …</text></g>
+          </g>
+          <g filter="url(#t1-glow)"><rect x="800" y="86" width="156" height="68" rx="14" fill="#0e2018" stroke="url(#t1-grad)" stroke-width="2"/></g>
+          <text x="878" y="114" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-weight="600" font-size="17">Execução</text>
+          <text x="878" y="136" text-anchor="middle" fill="#a7f3d0" font-family="Inter,sans-serif" font-size="12.5">controlada + confiança</text>
+        </svg>
+        <p class="text-xs text-neutral-500 mt-2 text-center">A promessa da linguagem: transformar intenção vaga em execução com protocolo, registro e confiança declarada.</p>
+      </div>
+    </div>
+
+    <!-- MAPA DA TRILHA -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12">
+      <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="#modulo-1-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold text-sm">1.1</span>
+            <span class="text-xs text-neutral-500">~65 min</span>
+          </div>
+          <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">⌨️ A linguagem /inema</h3>
+          <p class="text-xs text-neutral-400">Uma gramática, cem superpoderes</p>
+        </a>
+        <a href="#modulo-1-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold text-sm">1.2</span>
+            <span class="text-xs text-neutral-500">~75 min</span>
+          </div>
+          <h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">🔍 Verdade e verificação</h3>
+          <p class="text-xs text-neutral-400">Fato nunca misturado com palpite</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- CARTÕES SIMPLES -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="modulo-1-1.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-6 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold">1.1</span>
+            <span class="text-xs text-neutral-500">~65 min · 7 tópicos</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">⌨️ A linguagem /inema</h3>
+          <p class="text-sm text-neutral-400">Sintaxe, as 10 regras, composição, cadeias, presets e o contrato de runtime.</p>
+        </a>
+        <a href="modulo-1-2.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-6 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold">1.2</span>
+            <span class="text-xs text-neutral-500">~75 min · 8 tópicos</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">🔍 Verdade e verificação</h3>
+          <p class="text-sm text-neutral-400">De /truth a /freshness: os 10 comandos que sustentam tudo o que a IA afirma.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- CONTEÚDO DETALHADO -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+      <h2 class="text-2xl font-bold mb-6">Conteúdo detalhado</h2>
+
+      <!-- MODULO 1.1 -->
+      <div id="modulo-1-1" data-inema-module="1-1" data-inema-track="1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold">1.1</span>
+            <span class="text-xs text-neutral-500">~65 min</span>
+          </div>
+          <h3 class="text-2xl font-bold mb-2">⌨️ A linguagem /inema</h3>
+          <p class="text-neutral-400 text-sm">Da primeira barra ao runtime completo: como um comando declara trabalho, recebe parâmetros e se combina em cadeias.</p>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">🧠</span>
+              <div><span class="font-medium">O que é a INEMA Command Language</span><span class="text-neutral-500 text-sm ml-2">- linguagem operacional, não código secreto</span></div>
+            </button>
+            <div id="painel-1-1-1" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Uma DSL curta para controlar como modelos e agentes pesquisam, verificam, decidem e executam. Cada comando carrega um protocolo de trabalho.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Sem uma linguagem, você reaproveita prompts soltos. Com ela, o mesmo pedido produz saída padronizada e verificável.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">DSL · comando declarativo · protocolo · reprodutibilidade.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">⌨️</span>
+              <div><span class="font-medium">A sintaxe-base</span><span class="text-neutral-500 text-sm ml-2">- /comando [parâmetros opcionais]</span></div>
+            </button>
+            <div id="painel-1-1-2" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Barra + nome curto, com parâmetros opcionais na forma chave=valor: /rank criteria=impact,cost,risk.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">A sintaxe é o único mecanismo que você precisa decorar — todo o resto é vocabulário de comandos.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">prefixo / · parâmetro chave=valor · composição por espaço.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">📜</span>
+              <div><span class="font-medium">As 10 regras da linguagem</span><span class="text-neutral-500 text-sm ml-2">- ordem, conflito, precedência</span></div>
+            </button>
+            <div id="painel-1-1-3" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">As regras oficiais: comandos são instruções declarativas; ordem importa em cadeia explícita; em conflito vence a regra mais específica, depois a mais recente.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É o que impede comportamento imprevisível quando dois pedidos colidem.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">declaratividade · precedência específica &gt; recente · runtime registra tudo.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🔗</span>
+              <div><span class="font-medium">Composição em linha</span><span class="text-neutral-500 text-sm ml-2">- /truth /gaps /pushback /rank</span></div>
+            </button>
+            <div id="painel-1-1-4" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Vários comandos numa mesma linha formam um pacote de instruções executado junto.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Composição cobre 80% do uso diário sem precisar de /chain explícito.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">pacote de instruções · sinergia entre famílias · parcimônia.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">⛓️</span>
+              <div><span class="font-medium">Encadear com /chain</span><span class="text-neutral-500 text-sm ml-2">- sequência explícita, saída vira entrada</span></div>
+            </button>
+            <div id="painel-1-1-5" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">/chain(/research -&gt; /truth -&gt; /rank -&gt; /decide) fixa a ordem e passa a saída relevante de um comando ao próximo.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Cadeias produzem fluxos repetíveis — a base dos presets do módulo 6.2.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">ordem explícita · passagem de saída · pipeline.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🎛️</span>
+              <div><span class="font-medium">/mode e /preset</span><span class="text-neutral-500 text-sm ml-2">- modo global e macros</span></div>
+            </button>
+            <div id="painel-1-1-6" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">/mode ativa um perfil persistente de comportamento (conservador, exploratório, executivo). /preset expande um nome curto numa cadeia predefinida.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">São os controles de nível mais alto: mudam o "como" de tudo que vem depois.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">perfil global · macro expansão · consistência entre sessões.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-1-7" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+              <span class="text-lg">🧾</span>
+              <div><span class="font-medium">Runtime: registro, aceitação, fallback</span><span class="text-neutral-500 text-sm ml-2">- o contrato de execução</span></div>
+            </button>
+            <div id="painel-1-1-7" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Todo comando pode ter critérios de aceitação e fallback; o runtime registra entradas, saídas, ferramentas usadas, confiança e falhas.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É o que torna a linguagem auditável — você sabe o que rodou, com quanta confiança e o que fazer quando falha.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">log operacional · confiança declarada · fallback seguro.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-1-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-1-1.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+
+      <!-- MODULO 1.2 -->
+      <div id="modulo-1-2" data-inema-module="1-2" data-inema-track="1" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-emerald-400 font-bold">1.2</span>
+            <span class="text-xs text-neutral-500">~75 min</span>
+          </div>
+          <h3 class="text-2xl font-bold mb-2">🔍 Verdade e verificação</h3>
+          <p class="text-neutral-400 text-sm">Os 10 comandos da família 01: de /truth a /freshness — o antídoto contra alucinação e falsa certeza.</p>
+        </div>
+        <div class="divide-y divide-dark-600">
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+              <span class="text-lg">💎</span>
+              <div><span class="font-medium">/truth</span><span class="text-neutral-500 text-sm ml-2">- fato, inferência, hipótese, desconhecido</span></div>
+            </button>
+            <div id="painel-1-2-1" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Separa fato verificado, inferência, hipótese e desconhecido; informa nível de confiança.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É o comando mais usado da linguagem — a higiene básica de qualquer resposta.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">fato vs inferência · premissa verificada · confiança informada.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+              <span class="text-lg">✅</span>
+              <div><span class="font-medium">/verify e /evidence</span><span class="text-neutral-500 text-sm ml-2">- confirmar afirmação e exigir prova</span></div>
+            </button>
+            <div id="painel-1-2-2" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">/verify procura evidência suficiente para confirmar, corrigir ou rejeitar uma afirmação específica; /evidence mostra quais provas sustentam cada conclusão.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Transformam "confie em mim" em "confira você mesmo".</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">afirmação-alvo · base probatória · lacuna de dados.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+              <span class="text-lg">📚</span>
+              <div><span class="font-medium">/sources</span><span class="text-neutral-500 text-sm ml-2">- autoridade, atualidade, independência</span></div>
+            </button>
+            <div id="painel-1-2-3" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Organiza fontes por autoridade, atualidade, proximidade do fato e independência.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Três fontes independentes valem mais que dez citando a mesma origem.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">hierarquia de fontes · dependência entre citações.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+              <span class="text-lg">🔎</span>
+              <div><span class="font-medium">/factcheck</span><span class="text-neutral-500 text-sm ml-2">- claims confirmados, falsos, opinativos</span></div>
+            </button>
+            <div id="painel-1-2-4" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Quebra conteúdo em alegações verificáveis e classifica cada uma: confirmada, imprecisa, falsa, inconclusiva ou opinativa.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É a auditoria padrão antes de publicar ou decidir com base num texto.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">claim verificável · taxonomia de veredito.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+              <span class="text-lg">🎚️</span>
+              <div><span class="font-medium">/confidence</span><span class="text-neutral-500 text-sm ml-2">- calibrar certeza e saber o que a moveria</span></div>
+            </button>
+            <div id="painel-1-2-5" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Atribui nível de confiança às conclusões e explica quais fatores aumentariam ou reduziriam essa confiança.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Decisões boas usam confiança calibrada, não tom de voz confiante.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">calibração · sensibilidade da conclusão.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+              <span class="text-lg">🌫️</span>
+              <div><span class="font-medium">/uncertainty e /assumptions</span><span class="text-neutral-500 text-sm ml-2">- incertezas e premissas explícitas</span></div>
+            </button>
+            <div id="painel-1-2-6" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">/uncertainty expõe dados faltantes e interpretações plausíveis; /assumptions lista premissas marcadas como verificadas, razoáveis ou frágeis.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Premissa frágil não declarada é a causa nº 1 de análise bonita e errada.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">inventário de incerteza · status de premissa.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-7" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+              <span class="text-lg">🧬</span>
+              <div><span class="font-medium">/provenance</span><span class="text-neutral-500 text-sm ml-2">- origem de cada informação crítica</span></div>
+            </button>
+            <div id="painel-1-2-7" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Mostra de onde veio cada informação crítica: dado primário, secundário, inferido ou fornecido pelo usuário.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Diferencia "eu medi" de "alguém me disse" — e isso muda o peso da evidência.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">cadeia de custódia da informação.</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-item">
+            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-1-2-8" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
+              <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">8</span>
+              <span class="text-lg">⏳</span>
+              <div><span class="font-medium">/freshness e o fluxo de auditoria</span><span class="text-neutral-500 text-sm ml-2">- validade temporal + prática guiada</span></div>
+            </button>
+            <div id="painel-1-2-8" class="topic-explanation px-6 pb-4">
+              <div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+                <div><span class="text-emerald-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">/freshness identifica o que pode ter mudado e exige atualização antes de usar dados sensíveis ao tempo. Fecha o módulo com o fluxo completo de auditoria.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Estatística velha apresentada como atual é o erro mais fácil de cometer — e de detectar com o comando certo.</p></div>
+                <div><span class="text-emerald-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">validade temporal · gatilho de atualização · auditoria em camadas.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+          <button onclick="openModal('modal-1-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
+          <a href="modulo-1-2.html" class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors">Ver Completo</a>
+        </div>
+      </div>
+
+      <!-- NAVEGACAO ENTRE TRILHAS -->
+      <div class="flex flex-col sm:flex-row gap-4 mt-12 mb-8">
+        <a href="../../index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar ao início</a>
+        <a href="../trilha2/index.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Próxima Trilha: Pesquisa &amp; Análise →</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAIS IFRAME -->
+  <div id="modal-1-1" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3"><span class="text-emerald-400 font-bold">1.1</span><span class="font-semibold">A linguagem /inema</span></div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-1-1.html" title="Módulo 1.1" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+  <div id="modal-1-2" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
+    <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+      <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+        <div class="flex items-center space-x-3"><span class="text-emerald-400 font-bold">1.2</span><span class="font-semibold">Verdade e verificação</span></div>
+        <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
+      </div>
+      <iframe src="modulo-1-2.html" title="Módulo 1.2" class="flex-1 w-full rounded-b-xl"></iframe>
+    </div>
+  </div>
+
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>🧭 INEMA Command Language — Trilha 1 · Fundamentos · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active') ? 'true' : 'false');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlEl = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !htmlEl.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      htmlEl.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      htmlEl.classList.toggle('dark');
+      localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+  </script>
+</body>
+</html>

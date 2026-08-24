@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 1.1 — A linguagem /inema | INEMA Command Language</title>
+  <meta name="inema-course" content="inema-dsl">
+
+  <!-- ANTI-FOUC -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') { for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k]; }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = {
+        'inema-dark': { dark: true, attr: null, cs: 'dark' },
+        'claro': { dark: false, attr: null, cs: 'light' },
+        'sepia': { dark: false, attr: 'sepia', cs: 'light' },
+        'foco': { dark: null, attr: 'foco', cs: null },
+        'contraste': { dark: true, attr: 'contraste', cs: 'dark' }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system' ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura' ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif' : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald: [152,76,45], blue: [217,91,60], purple: [258,90,66], amber: [38,92,50], teal: [174,72,41], rose: [350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + ''); s.setProperty('--accent-s', a[1] + '%'); s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+
+  <script type="application/json" data-inema-manifest>
+{"course":"inema-dsl","tracks":[
+{"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
+{"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
+{"n":"3","title":"Crítica & Decisão","modules":[{"id":"3-1","title":"Red team e robustez","topics":8,"href":"curso/trilha3/modulo-3-1.html"},{"id":"3-2","title":"Comparação e decisão","topics":8,"href":"curso/trilha3/modulo-3-2.html"}]},
+{"n":"4","title":"Plano & Execução","modules":[{"id":"4-1","title":"Planejamento e arquitetura","topics":8,"href":"curso/trilha4/modulo-4-1.html"},{"id":"4-2","title":"Execução e operações","topics":8,"href":"curso/trilha4/modulo-4-2.html"}]},
+{"n":"5","title":"Negócio & IA aplicada","modules":[{"id":"5-1","title":"Produto, negócios e monetização","topics":8,"href":"curso/trilha5/modulo-5-1.html"},{"id":"5-2","title":"Prototipagem e agentes de IA","topics":8,"href":"curso/trilha5/modulo-5-2.html"}]},
+{"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
+]}
+</script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 100; background: #111827; color: #FACC15; padding: .5rem 1rem; border-radius: .5rem; }
+    .skip:focus { left: .5rem; top: .5rem; }
+    [id] { scroll-margin-top: 88px; }
+    :focus-visible { outline: 3px solid var(--accent-2, #38bdf8); outline-offset: 2px; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🧭</span>
+            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+          <span class="text-neutral-600">-</span>
+          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Sua jornada no curso">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
+          </button>
+          <a href="../trilha1/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span></a>
+          <a href="../trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span></a>
+          <a href="../trilha4/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors hidden lg:inline-flex">Plano</a>
+          <a href="../trilha5/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors hidden lg:inline-flex">Negócio</a>
+          <a href="../trilha6/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors hidden xl:inline-flex">Maestria</a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2 text-sm text-neutral-400">
+        <a href="../../index.html" class="hover:text-emerald-400">Início</a>
+        <span>/</span>
+        <a href="index.html" class="hover:text-emerald-400">Trilha 1</a>
+        <span>/</span>
+        <span class="text-emerald-400">Módulo 1.1</span>
+      </div>
+    </nav>
+
+    <article id="modulo-1-1" data-inema-module="1-1" data-inema-track="1">
+    <header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">MODULO 1.1</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">⌨️ A linguagem /inema</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl" data-inema-block="m1-1-head">Da primeira barra ao runtime completo. Em sete tópicos você aprende a gramática que faz os mesmos 100 comandos funcionarem em qualquer agente.</p>
+        <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">7</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">65</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Básico</div><div class="text-xs text-neutral-400">Nível</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-emerald-400">Teoria+Prática</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+        <div data-inema-meter="modulo:1-1" class="inema-meter mt-6 max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do módulo 1.1">
+          <div class="flex items-center gap-3">
+            <span class="text-emerald-400 font-bold w-12" data-inema-meter-pct>0%</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 7</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-10">
+
+        <div><!-- COLUNA PRINCIPAL -->
+
+        <!-- TOPICO 1 -->
+        <section id="topico-1" data-inema-topic="modulo-1-1#topico-1" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+              <h2 class="text-2xl font-bold">🧠 O que é a INEMA Command Language</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-4 leading-relaxed" data-inema-block="m1-1-t1-p1">
+            A INEMA Command Language é uma <strong class="text-emerald-400">linguagem operacional curta</strong>: um vocabulário de
+            100 comandos que controla como modelos e agentes de IA pesquisam, verificam, analisam, criticam, decidem,
+            planejam, executam e comunicam. Você não programa — você <em>dirige</em>.
+          </p>
+          <div class="bg-dark-700/40 border-l-4 border-emerald-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-emerald-400">Novo aqui?</strong> Uma <strong>DSL</strong>
+            (<em>Domain-Specific Language</em>, linguagem de domínio específico) é uma linguagem pequena feita para um único propósito —
+            como SQL é para bancos de dados. Aqui o propósito é <strong>dirigir IA com precisão</strong>. Um <strong>comando
+            declarativo</strong> descreve <em>o que você quer</em> (ex.: "separe fato de inferência") sem especificar os passos internos.</p>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">💡</span> O princípio central</h3>
+            <p class="text-neutral-300 mb-3">Um comando não é uma palavra mágica: ele é a ponta visível de um <strong class="text-white">protocolo</strong>.</p>
+            <ul class="space-y-2 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span><code class="font-mono text-xs bg-dark-900/60 px-1.5 py-0.5 rounded">/factcheck</code> não "pede checagem" — ele <strong>quebra o texto em claims</strong>, classifica cada um (confirmado, impreciso, falso, inconclusivo, opinativo) e entrega o veredito.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-emerald-400 mt-1">•</span><span>O mesmo comando em agentes diferentes produz <strong>forma de saída comparável</strong> — porque o protocolo, não o modelo, define a forma.</span></li>
+            </ul>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span>
+              <span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span>
+              <span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 2 -->
+        <section id="topico-2" data-inema-topic="modulo-1-1#topico-2" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+              <h2 class="text-2xl font-bold">⌨️ A sintaxe-base</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-1-t2-p1">
+            Toda a sintaxe cabe numa linha: <code class="font-mono text-sm bg-dark-900/60 px-1.5 py-0.5 rounded text-sky-400">/comando [parâmetros opcionais]</code>.
+            Parâmetros usam a forma <strong class="text-emerald-400">chave=valor</strong>. Nada de aspas obrigatórias, nada de ponto-e-vírgula.
+          </p>
+          <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+            <svg viewBox="0 0 1000 250" class="w-full h-auto" role="img" aria-label="Anatomia de um comando: a barra e o nome do comando entram pela esquerda, os parâmetros chave igual valor no meio, e à direita o runtime devolve saída estruturada junto com confiança e registro">
+              <defs>
+                <linearGradient id="m11-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+                <filter id="m11-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <pattern id="m11-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#10b981" opacity="0.12"/></pattern>
+                <marker id="m11-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"/></marker>
+                <marker id="m11-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+              </defs>
+              <rect x="0" y="0" width="1000" height="250" fill="url(#m11-grid)"/>
+              <g filter="url(#m11-glow)"><rect x="40" y="90" width="200" height="70" rx="14" fill="#0e2018" stroke="url(#m11-grad)" stroke-width="2"/></g>
+              <text x="140" y="120" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-weight="600" font-size="18">/rank criteria=impact,</text>
+              <text x="140" y="142" text-anchor="middle" fill="#34d399" font-family="Inter,sans-serif" font-weight="600" font-size="18">cost,risk</text>
+              <g fill="none" stroke="#34d399" stroke-width="2" opacity="0.65"><path d="M240,125 L330,125" marker-end="url(#m11-ah)"/></g>
+              <rect x="332" y="80" width="230" height="90" rx="14" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+              <text x="447" y="112" text-anchor="middle" fill="#a7f3d0" font-family="Inter,sans-serif" font-size="13.5">comando + parâmetro</text>
+              <text x="447" y="134" text-anchor="middle" fill="#6ee7b7" font-family="Inter,sans-serif" font-size="12">(chave=valor)</text>
+              <text x="447" y="156" text-anchor="middle" fill="#a7f3d0" font-family="Inter,sans-serif" font-size="12.5">protocolo ativado</text>
+              <g fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.6"><path d="M562,125 L650,125" marker-end="url(#m11-ahc)"/></g>
+              <rect x="652" y="52" width="150" height="46" rx="10" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/>
+              <text x="727" y="80" text-anchor="middle" fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13">saída estruturada</text>
+              <rect x="652" y="108" width="150" height="46" rx="10" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/>
+              <text x="727" y="136" text-anchor="middle" fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13">nível de confiança</text>
+              <rect x="652" y="164" width="150" height="46" rx="10" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/>
+              <text x="727" y="192" text-anchor="middle" fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13">registro no runtime</text>
+            </svg>
+            <p class="text-xs text-neutral-500 mt-2 text-center">Anatomia real de <code>/rank criteria=impact,cost,risk</code>: comando → protocolo → saída com confiança e log.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-emerald-400">🎯 Experimente agora (copie e rode)</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/truth sobre <a afirmação que você acredita — ex.: "meu mercado cresceu 30% em 2025"></pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Objetivo:</strong> ver o comando separar fato, inferência e desconhecido na sua própria afirmação.<br>
+              <strong class="text-neutral-300">Como verificar:</strong> a resposta deve trazer blocos separados de fatos verificados, inferências, desconhecidos e um nível de confiança.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 3 -->
+        <section id="topico-3" data-inema-topic="modulo-1-1#topico-3" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+              <h2 class="text-2xl font-bold">📜 As 10 regras da linguagem</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-1-t3-p1">
+            As regras são curtas, mas resolvem os problemas que quebram prompts improvisados: ambiguidade, ordem de execução e conflito entre instruções.
+          </p>
+          <div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">⚖️</span> Destaque para três regras</h3>
+            <ul class="space-y-3 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-emerald-400 font-bold mr-1">5.</span><span><strong class="text-white">Conflito:</strong> vence a regra mais específica; empatou, vence a mais recente. É a precedência oficial da linguagem.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-emerald-400 font-bold mr-1">6.</span><span><strong class="text-white">Divisão de trabalho:</strong> <code class="font-mono text-xs bg-dark-900/60 px-1 rounded">/preset</code> expande macros, <code class="font-mono text-xs bg-dark-900/60 px-1 rounded">/chain</code> controla sequência, <code class="font-mono text-xs bg-dark-900/60 px-1 rounded">/mode</code> define comportamento global.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-emerald-400 font-bold mr-1">9.</span><span><strong class="text-white">Geração ≠ verificação:</strong> quando o risco é relevante, quem gera não pode ser quem verifica — separe os papéis.</span></li>
+            </ul>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+              <h4 class="font-bold text-emerald-400 mb-4">✓ Regras bem usadas</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Tratar comandos como <strong>instruções declarativas</strong>, não como feitiços.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Respeitar ordem em cadeia explícita (<code class="font-mono text-xs">/chain(/research -&gt; /truth -&gt; /decide)</code>).</span></li>
+                <li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Exigir critérios de aceitação em comandos críticos.</span></li>
+              </ul>
+            </div>
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+              <h4 class="font-bold text-red-400 mb-4">✗ Erros que as regras evitam</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Empilhar comandos contraditórios esperando que "o modelo entenda".</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Assumir que ordem de digitação = ordem de execução fora de cadeia explícita.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Aceitar saída sem confiança nem registro em decisões de risco.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Guarde só a regra 5 de cabeça (específica &gt; recente). As outras nove você consulta — elas existem justamente para não precisarem de memorização.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 4 -->
+        <section id="topico-4" data-inema-topic="modulo-1-1#topico-4" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+              <h2 class="text-2xl font-bold">🔗 Composição em linha</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-1-t4-p1">
+            Vários comandos numa mesma linha formam um <strong class="text-emerald-400">pacote de instruções</strong>: <code class="font-mono text-sm bg-dark-900/60 px-1.5 py-0.5 rounded text-sky-400">/truth /gaps /pushback /rank</code>.
+            É o jeito mais rápido de montar uma resposta robusta sem cerimônia.
+          </p>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-emerald-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/truth /gaps /pushback /rank criteria=impacto,custo,risco sobre <sua ideia aqui></pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a resposta deve conter as quatro assinaturas — separação fato/inferência, lacunas, contestação e ranking.</p>
+            </div>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Comece com 2–3 comandos, não dez. Pacote gigante dilui a atenção do modelo; composição boa é composta por famílias complementares (verdade + crítica + decisão).</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 5 -->
+        <section id="topico-5" data-inema-topic="modulo-1-1#topico-5" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+              <h2 class="text-2xl font-bold">⛓️ Encadear com /chain</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-1-t5-p1">
+            Quando a <strong class="text-emerald-400">ordem importa</strong> e a saída de um passo alimenta o próximo, use cadeia explícita:
+            <code class="font-mono text-sm bg-dark-900/60 px-1.5 py-0.5 rounded text-sky-400">/chain(/research -&gt; /truth -&gt; /rank -&gt; /decide)</code>.
+            Novo aqui? Pense num <strong>pipeline</strong>: esteira onde cada estação recebe o trabalho da anterior.
+          </p>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-emerald-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/chain(/research -&gt; /truth -&gt; /rank -&gt; /decide) sobre <decisão difícil que você está adiando></pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> cada etapa deve citar de onde veio sua entrada (a etapa anterior) — sem isso, não houve passagem de saída.</p>
+            </div>
+          </div>
+          <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-red-400 mb-2 flex items-center"><span class="mr-2">⚠️</span> Atenção</h3>
+            <p class="text-neutral-300 text-sm">Cadeia longa demais esconde erros cedo demais. Se a etapa 1 errar, tudo depois herda o erro. Para fluxos longos, intercale <code class="font-mono text-xs">/verify</code> ou <code class="font-mono text-xs">/review</code> como válvulas de controle.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 6 -->
+        <section id="topico-6" data-inema-topic="modulo-1-1#topico-6" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+              <h2 class="text-2xl font-bold">🎛️ /mode e /preset</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-4 leading-relaxed" data-inema-block="m1-1-t6-p1">
+            São os dois controles de nível mais alto. <code class="font-mono text-sm bg-dark-900/60 px-1.5 py-0.5 rounded text-sky-400">/mode</code> define comportamento global persistente
+            (conservador, exploratório, executivo). <code class="font-mono text-sm bg-dark-900/60 px-1.5 py-0.5 rounded text-sky-400">/preset</code> expande um nome curto
+            numa cadeia predefinida de comandos com parâmetros — uma <strong class="text-emerald-400">macro</strong> (atalho que vira várias instruções).
+          </p>
+          <div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+            <svg viewBox="0 0 1000 210" class="w-full h-auto" role="img" aria-label="Aninhamento: um preset contém uma cadeia que contém comandos individuais, mostrando que expandir um preset revela vários comandos encadeados">
+              <defs>
+                <filter id="m11b-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <rect x="30" y="25" width="940" height="160" rx="16" fill="#0e2018" stroke="#34d399" stroke-width="2"/>
+              <text x="60" y="58" fill="#34d399" font-family="Inter,sans-serif" font-weight="600" font-size="15">/preset "decisao"</text>
+              <rect x="70" y="75" width="860" height="90" rx="12" fill="#0b1712" stroke="#10b981" stroke-width="2"/>
+              <text x="95" y="103" fill="#6ee7b7" font-family="Inter,sans-serif" font-weight="600" font-size="13">/chain(/research -&gt; /truth -&gt; /gaps -&gt; /pushback -&gt; /rank -&gt; /decide)</text>
+              <g font-family="Inter,sans-serif" font-size="12" font-weight="600">
+                <rect x="95" y="118" width="110" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="150" y="136" text-anchor="middle" fill="#bfe6ff">/research</text>
+                <rect x="215" y="118" width="90" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="260" y="136" text-anchor="middle" fill="#bfe6ff">/truth</text>
+                <rect x="315" y="118" width="80" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="355" y="136" text-anchor="middle" fill="#bfe6ff">/gaps</text>
+                <rect x="405" y="118" width="115" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="462" y="136" text-anchor="middle" fill="#bfe6ff">/pushback</text>
+                <rect x="530" y="118" width="85" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="572" y="136" text-anchor="middle" fill="#bfe6ff">/rank</text>
+                <rect x="625" y="118" width="95" height="28" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="672" y="136" text-anchor="middle" fill="#bfe6ff">/decide</text>
+              </g>
+            </svg>
+            <p class="text-xs text-neutral-500 mt-2 text-center">Um preset é uma caixa dentro de caixa: ao expandir, revela uma cadeia completa de comandos.</p>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Use <code class="font-mono text-xs">/mode conservador</code> em temas regulatórios ou médicos; <code class="font-mono text-xs">/mode exploratorio</code> em brainstorm. O modo muda o apetite de risco de todos os comandos seguintes.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 7 -->
+        <section id="topico-7" data-inema-topic="modulo-1-1#topico-7" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">7</span>
+              <h2 class="text-2xl font-bold">🧾 Runtime: registro, aceitação, fallback</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0">
+              <span aria-hidden="true">?</span><span>Tenho dúvida</span>
+            </button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m1-1-t7-p1">
+            O contrato de execução tem três peças: o <strong class="text-emerald-400">runtime registra tudo</strong> (entradas, saídas, ferramentas, confiança, falhas),
+            todo comando pode ter <strong class="text-emerald-400">critérios de aceitação</strong> (como saber que deu certo) e um
+            <strong class="text-emerald-400">fallback</strong> (o que fazer quando não dá).
+          </p>
+          <div class="space-y-6 mb-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">1</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                <h4 class="font-semibold text-white mb-1">Registro operacional</h4>
+                <p class="text-sm text-neutral-400">Regra 7 da linguagem: entradas, saídas, ferramentas usadas, confiança e falhas ficam registradas. Sem log, não há auditoria.</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">2</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                <h4 class="font-semibold text-white mb-1">Critérios de aceitação</h4>
+                <p class="text-sm text-neutral-400">Regra 10: defina antes o que conta como sucesso ("todo claim crítico sustentado"). Evita aceitar resposta bonita e vazia.</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="text-emerald-400 font-bold">3</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+                <h4 class="font-semibold text-white mb-1">Fallback seguro</h4>
+                <p class="text-sm text-neutral-400">Quando não verifica, o comando declara o que não conseguiu verificar — nunca inventa. Falhar honesto é comportamento correto.</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-emerald-400">🧪 Como um comando descreve seu próprio contrato (YAML interno)</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-xs bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">name: /truth
+family: verification
+purpose: separar fatos, inferências, hipóteses e desconhecidos
+acceptance:
+  - critical claims are supported
+fallback:
+  - state what could not be verified</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como ler:</strong> <code class="font-mono text-xs">acceptance</code> é o teste de sucesso; <code class="font-mono text-xs">fallback</code> é o comportamento honesto de falha. O módulo 6.2 abre essa estrutura inteira.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- CHECAGEM LEVE -->
+        <div data-inema-check="modulo-1-1#q1" class="inema-check bg-dark-800 border border-dark-600 rounded-xl p-6 mb-12">
+          <p class="font-medium mb-4">Auto-verificação rápida (opcional): dois comandos colidem numa linha. Qual regra resolve o conflito?</p>
+          <div class="inema-check-options space-y-2">
+            <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Vence sempre o primeiro comando digitado</button>
+            <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Vence a regra mais específica; empatando, a mais recente</button>
+            <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O modelo escolhe o que fizer mais sentido no momento</button>
+          </div>
+          <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+        </div>
+
+        <!-- RESUMO FINAL -->
+        <section class="mb-12">
+          <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumo do Módulo</h2>
+            <div class="space-y-4 mb-8">
+              <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Comandos declarativos</strong><span class="text-neutral-400"> — cada barra ativa um protocolo completo, não um truque.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Sintaxe mínima</strong><span class="text-neutral-400"> — /comando + parâmetros chave=valor; composição por espaço; ordem via /chain.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Precedência clara</strong><span class="text-neutral-400"> — específica vence recente; runtime registra tudo com confiança.</span></div></div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+              <h3 class="font-semibold text-emerald-400 mb-2">Próximo Módulo:</h3>
+              <p class="text-neutral-300">1.2 - Verdade e verificação — os 10 comandos que impedem a IA de apresentar palpite como fato.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+              <a href="modulo-1-2.html" class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors">Próximo Módulo →</a>
+            </div>
+          </div>
+        </section>
+
+        <div data-inema-meter="trilha:1" class="inema-meter max-w-md mb-4" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 1">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Trilha 1:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+        <div data-inema-meter="curso" class="inema-meter max-w-md mb-8" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do curso">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Curso:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+
+        </div><!-- /coluna principal -->
+
+        <!-- TOC STICKY -->
+        <nav data-inema-toc aria-label="Índice da página" class="hidden lg:block sticky top-24 self-start">
+          <p class="text-sm text-neutral-400 mb-2">Seção <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">7</span></p>
+          <ul class="space-y-1 text-sm">
+            <li><a href="#topico-1" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">1. O que é a linguagem</a></li>
+            <li><a href="#topico-2" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">2. Sintaxe-base</a></li>
+            <li><a href="#topico-3" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">3. As 10 regras</a></li>
+            <li><a href="#topico-4" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">4. Composição em linha</a></li>
+            <li><a href="#topico-5" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">5. Cadeias (/chain)</a></li>
+            <li><a href="#topico-6" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">6. /mode e /preset</a></li>
+            <li><a href="#topico-7" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10">7. Runtime e fallback</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    </article>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>🧭 INEMA Command Language — Módulo 1.1 · Trilha Fundamentos · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active') ? 'true' : 'false');
+    }
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlEl = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !htmlEl.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden'); htmlEl.classList.remove('dark');
+    } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      htmlEl.classList.toggle('dark');
+      localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.INEMA && INEMA.registerCheck) {
+        INEMA.registerCheck('modulo-1-1#q1', {
+          answer: 1,
+          explain: {
+            0: 'Não: fora de cadeia explícita a ordem de digitação não define prioridade.',
+            1: 'Exato — regra 5 da linguagem: mais específica vence; empate vai para a mais recente.',
+            2: 'Não: imprevisível é exatamente o que a precedência formal elimina.'
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

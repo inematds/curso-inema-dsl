@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 3.2 — Comparação e decisão | INEMA Command Language</title>
+  <meta name="inema-course" content="inema-dsl">
+
+  <!-- ANTI-FOUC -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') { for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k]; }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = {
+        'inema-dark': { dark: true, attr: null, cs: 'dark' },
+        'claro': { dark: false, attr: null, cs: 'light' },
+        'sepia': { dark: false, attr: 'sepia', cs: 'light' },
+        'foco': { dark: null, attr: 'foco', cs: null },
+        'contraste': { dark: true, attr: 'contraste', cs: 'dark' }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system' ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura' ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif' : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald: [152,76,45], blue: [217,91,60], purple: [258,90,66], amber: [38,92,50], teal: [174,72,41], rose: [350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + ''); s.setProperty('--accent-s', a[1] + '%'); s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+
+  <script type="application/json" data-inema-manifest>
+{"course":"inema-dsl","tracks":[
+{"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
+{"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
+{"n":"3","title":"Crítica & Decisão","modules":[{"id":"3-1","title":"Red team e robustez","topics":8,"href":"curso/trilha3/modulo-3-1.html"},{"id":"3-2","title":"Comparação e decisão","topics":8,"href":"curso/trilha3/modulo-3-2.html"}]},
+{"n":"4","title":"Plano & Execução","modules":[{"id":"4-1","title":"Planejamento e arquitetura","topics":8,"href":"curso/trilha4/modulo-4-1.html"},{"id":"4-2","title":"Execução e operações","topics":8,"href":"curso/trilha4/modulo-4-2.html"}]},
+{"n":"5","title":"Negócio & IA aplicada","modules":[{"id":"5-1","title":"Produto, negócios e monetização","topics":8,"href":"curso/trilha5/modulo-5-1.html"},{"id":"5-2","title":"Prototipagem e agentes de IA","topics":8,"href":"curso/trilha5/modulo-5-2.html"}]},
+{"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
+]}
+</script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 100; background: #111827; color: #FACC15; padding: .5rem 1rem; border-radius: .5rem; }
+    .skip:focus { left: .5rem; top: .5rem; }
+    [id] { scroll-margin-top: 88px; }
+    :focus-visible { outline: 3px solid var(--accent-2, #38bdf8); outline-offset: 2px; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - acentos das trilhas */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217, 119, 6, 0.18); }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .bg-teal-900\/20 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .bg-primary\/20 { background-color: rgba(161, 98, 7, 0.15); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🧭</span>
+            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+          <span class="text-neutral-600">-</span>
+          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Sua jornada no curso">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
+          </button>
+          <a href="../trilha1/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span></a>
+          <a href="../trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span></a>
+          <a href="../trilha4/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Plano</a>
+          <a href="../trilha5/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Negócio</a>
+          <a href="../trilha6/index.html" class="hidden xl:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Maestria</a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+<main id="conteudo">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2 text-sm text-neutral-400">
+        <a href="../../index.html" class="hover:text-purple-400">Início</a><span>/</span>
+        <a href="index.html" class="hover:text-purple-400">Trilha 3</a><span>/</span>
+        <span class="text-purple-400">Módulo 3.2</span>
+      </div>
+    </nav>
+
+    <article id="modulo-3-2" data-inema-module="3-2" data-inema-track="3">
+    <header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">MODULO 3.2</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🎯 Comparação e decisão</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl" data-inema-block="m3-2-head">Os comandos da família 05: critérios antes das opções, ranking justificado, matrizes de trade-off e apostas com condição de saída.</p>
+        <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">8</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">75</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Intermediário</div><div class="text-xs text-neutral-400">Nível</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-purple-400">Prática</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+        <div data-inema-meter="modulo:3-2" class="inema-meter mt-6 max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do módulo 3.2">
+          <div class="flex items-center gap-3">
+            <span class="text-purple-400 font-bold w-12" data-inema-meter-pct>0%</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 8</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-10">
+      <div><!-- COLUNA PRINCIPAL -->
+
+        <!-- TOPICO 1 /criteria + /weights -->
+        <section id="topico-1" data-inema-topic="modulo-3-2#topico-1" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">1</span>
+              <h2 class="text-2xl font-bold">📏 /criteria + /weights — defina como escolher</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t1-p1">A regra de ouro da família 05: os critérios e seus pesos existem <strong class="text-purple-400">antes</strong> das opções serem avaliadas. Régua fixada depois é régua desenhada para a medida favorita.</p>
+          <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">📐</span> Anatomia de um bom critério</h3>
+            <ul class="space-y-2 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Mensurável:</strong> "tempo até primeiro cliente pagante", não "agilidade".</span></li>
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Ponderado:</strong> impacto 40%, custo 30%, risco 30% — pesos declarados, não implícitos.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Independente:</strong> critérios que duplicam o mesmo fator inflam a nota sem informar.</span></li>
+            </ul>
+          </div>
+          <div class="bg-dark-700/40 border-l-4 border-purple-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> <strong>Peso</strong> é o valor relativo de cada critério na nota final — a tradução numérica de "isso importa mais pra gente". Pesos não declarados não desaparecem: viram viés invisível.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/criteria /weights para escolher <o que você vai decidir>; proponha critérios mensuráveis e pesos com justificativa</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> você concorda com os pesos LENDO-os sozinho — se surpreenderem, discuta-os agora, não depois.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 2 /rank -->
+        <section id="topico-2" data-inema-topic="modulo-3-2#topico-2" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">2</span>
+              <h2 class="text-2xl font-bold">🥇 /rank — ordene alternativas com justificativa</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t2-p1">Ordena opções pelos critérios e <strong class="text-purple-400">explica cada posição</strong>. Ranking sem justificativa é preferência numerada; com parâmetros, vira padrão auditável do time.</p>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/rank criteria=impacto,custo,risco entre <opção A>, <opção B> e <opção C>; justifique cada posição</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> troque dois itens e veja se a justificativa continua coerente — ranking frágil desmorona no teste.</p>
+            </div>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Peça sensibilidade: "se peso de risco dobrar, quem vence?" Um ranking que muda totalmente com pequenas variações de peso é empate técnico disfarçado.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 3 /score -->
+        <section id="topico-3" data-inema-topic="modulo-3-2#topico-3" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">3</span>
+              <h2 class="text-2xl font-bold">🔢 /score — pontue em escala explícita</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t3-p1">Notas por critério em <strong class="text-purple-400">escala com âncoras</strong> ("7 = já temos cliente piloto nessa faixa"). Sem âncora, cada avaliador usa uma régua diferente e a média vira ruído.</p>
+          <div class="space-y-6 mb-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-white mb-1">Fixe âncoras por nível</h4><p class="text-sm text-neutral-400">Descreva o que significam 3, 6 e 9 em cada critério — exemplos concretos, não adjetivos.</p></div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-white mb-1">Mostre a composição</h4><p class="text-sm text-neutral-400">Nota total sempre acompanhada das notas parciais — vitória por um critério dominante deve ficar visível.</p></div>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/score as opções <A>, <B>, <C> em escala 1-10 por criterio com âncoras; mostre composição da nota final</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> dá para reconstruir a decisão olhando só a tabela — sem ler o texto corrido.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 4 /compare -->
+        <section id="topico-4" data-inema-topic="modulo-3-2#topico-4" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">4</span>
+              <h2 class="text-2xl font-bold">⚖️ /compare — compare sem decidir cedo demais</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t4-p1">Produz comparação lado a lado por dimensão, <strong class="text-purple-400">sem forçar veredito</strong>. Separar comparar de decidir preserva a janela onde alternativas ainda podem surpreender.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+              <h4 class="font-bold text-purple-400 mb-4">✓ Comparação aberta</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Mesmas dimensões para todas as opções — inclusive as que favorecem o azarão.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>"Diferenças que importam" destacadas separadas de diferenças cosméticas.</span></li>
+              </ul>
+            </div>
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+              <h4 class="font-bold text-red-400 mb-4">✗ Conclusão antecipada</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Comparação escrita para confirmar a opção que o chefe já escolheu.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Dimensões diferentes por opção — tabela que esconde o que incomoda.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/compare <ferramenta A> vs <ferramenta B> nas dimensões: custo, curva de aprendizado, lock-in e suporte. Só compare, não decida</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> tabela simétrica, mesma grade de dimensões, zero recomendação embutida no texto.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 5 /decide -->
+        <section id="topico-5" data-inema-topic="modulo-3-2#topico-5" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">5</span>
+              <h2 class="text-2xl font-bold">🏁 /decide — decida com evidência e reversibilidade</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-4 leading-relaxed" data-inema-block="m3-2-t5-p1">Fecha o processo com recomendação única, evidência e — crucialmente — o grau de <strong class="text-purple-400">reversibilidade</strong>: quanto custa voltar atrás se estiver errado?</p>
+          <div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+            <svg viewBox="0 0 1000 220" class="w-full h-auto" role="img" aria-label="Matriz de decisão estilo duas portas: à esquerda a porta reversível com setas indo e voltando marcada como decisões rapidinhas que pedem velocidade; à direita a porta irreversível com seta só de ida marcada como decisões caras de desfazer que pedem profundidade">
+              <defs>
+                <linearGradient id="m32-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c084fc"/><stop offset="1" stop-color="#a855f7"/></linearGradient>
+                <filter id="m32-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <g filter="url(#m32-glow)"><rect x="60" y="40" width="360" height="140" rx="14" fill="#1a1230" stroke="#38bdf8" stroke-width="2"/></g>
+              <rect x="90" y="65" width="80" height="90" rx="8" fill="#0e1b26" stroke="#38bdf8" stroke-width="1.5"/>
+              <path d="M100,110 C130,80 160,140 150,105 M150,105 l-8,10 M150,105 l11,-4" fill="none" stroke="#38bdf8" stroke-width="1.6"/>
+              <text x="290" y="85" text-anchor="middle" fill="#bfe6ff" font-family="Inter,sans-serif" font-weight="600" font-size="15">Porta reversível</text>
+              <text x="290" y="108" text-anchor="middle" fill="#93c5fd" font-family="Inter,sans-serif" font-size="12">custo baixo de voltar</text>
+              <text x="290" y="128" text-anchor="middle" fill="#7dd3fc" font-family="Inter,sans-serif" font-size="12">→ decida rápido, aprenda rápido</text>
+              <g><rect x="580" y="40" width="360" height="140" rx="14" fill="#1a1230" stroke="#fb7185" stroke-width="2"/>
+              <rect x="610" y="65" width="80" height="90" rx="8" fill="#2a0f16" stroke="#fb7185" stroke-width="1.5"/>
+              <path d="M622,110 H655 M648,102 l10,8 -10,8" fill="none" stroke="#fb7185" stroke-width="1.8"/>
+              <text x="810" y="85" text-anchor="middle" fill="#fecdd3" font-family="Inter,sans-serif" font-weight="600" font-size="15">Porta irreversível</text>
+              <text x="810" y="108" text-anchor="middle" fill="#fda4af" font-family="Inter,sans-serif" font-size="12">voltar custa caro ou é impossível</text>
+              <text x="810" y="128" text-anchor="middle" fill="#fbb6ce" font-family="Inter,sans-serif" font-size="12">→ red team + evidência antes</text></g>
+            </svg>
+            <p class="text-xs text-neutral-500 mt-2 text-center">Ilustrativo: a primeira pergunta de qualquer decisão é "por qual porta estou passando?"</p>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Cadeia completa da família: <code class="font-mono text-xs">/chain(/criteria -&gt; /rank -&gt; /decide)</code>. O decide herda os critérios fixados no início — impossíveis de ajustar retroativamente para a opção favorita.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/decide entre <A>, <B> e <C> usando os critérios definidos acima; declare reversibilidade e custo de mudar de ideia</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> uma recomendação única (não "depende"), com evidência citada e plano B declarado.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 6 /tradeoffmatrix -->
+        <section id="topico-6" data-inema-topic="modulo-3-2#topico-6" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">6</span>
+              <h2 class="text-2xl font-bold">🔲 /tradeoffmatrix — cruze alternativas × critérios</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t6-p1">A matriz completa: cada alternativa avaliada em cada critério, com pesos aplicados e cada célula justificada. Narrativas bonitas morrem diante de uma matriz bem feita.</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="text-left text-purple-400 border-b border-dark-600">
+                  <th class="py-3 px-4">Critério (peso)</th><th class="py-3 px-4">Opção A</th><th class="py-3 px-4">Opção B</th><th class="py-3 px-4">Opção C</th>
+                </tr>
+              </thead>
+              <tbody class="text-neutral-300 divide-y divide-dark-600">
+                <tr><td class="py-3 px-4">Impacto (40%)</td><td class="py-3 px-4">8 · alcance alto</td><td class="py-3 px-4">6 · médio prazo</td><td class="py-3 px-4">9 · mercado novo</td></tr>
+                <tr><td class="py-3 px-4">Custo (30%)</td><td class="py-3 px-4">5 · equipe nova</td><td class="py-3 px-4">8 · reaproveita time</td><td class="py-3 px-4">3 · capex alto</td></tr>
+                <tr><td class="py-3 px-4">Risco (30%)</td><td class="py-3 px-4">7 · tecnologia provada</td><td class="py-3 px-4">8 · dependência única</td><td class="py-3 px-4">4 · regulatório incerto</td></tr>
+              </tbody>
+            </table>
+            <p class="text-xs text-neutral-500 mt-2">Exemplo didático: célula = nota + motivo em uma linha. A matriz expõe que C ganha em impacto mas sangra em custo e risco.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/tradeoffmatrix entre <opções>; linhas=critérios com pesos, colunas=opções, cada célula com nota e motivo</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> nenhuma célula vazia e nenhum "ótimo" genérico — toda nota tem motivo verificável.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 7 /pareto -->
+        <section id="topico-7" data-inema-topic="modulo-3-2#topico-7" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">7</span>
+              <h2 class="text-2xl font-bold">📈 /pareto — ache a fronteira dominante</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-4 leading-relaxed" data-inema-block="m3-2-t7-p1">Elimina as <strong class="text-purple-400">opções dominadas</strong> — aquelas que outra opção iguala ou supera em todos os critérios — e apresenta a fronteira onde melhorar um critério exige sacrificar outro.</p>
+          <div class="bg-dark-700/40 border-l-4 border-purple-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-purple-400">Novo aqui?</strong> Na <strong>fronteira de Pareto</strong> não existe almoço grátis: para ganhar em um eixo você paga em outro. Opção dominada é a que perde para alguém em TODOS os eixos — ela nunca deveria ter chegado à mesa de decisão.</p>
+          </div>
+          <div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">🧹</span> O que o comando elimina</h3>
+            <ul class="space-y-2 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span>O concorrente interno mais caro e mais lento que outra proposta sua.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span>A ferramenta que outra cobre em preço E funcionalidade.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span>O projeto que outro entrega igual, antes e com menos gente.</span></li>
+            </ul>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/pareto sobre as opções listadas; elimine dominadas, mostre a fronteira e diga o trade-off de cada sobrevivente</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> lista encurtada com justificativa de dominação por eliminada — não por gosto.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 8 /bet + /stop -->
+        <section id="topico-8" data-inema-topic="modulo-3-2#topico-8" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">8</span>
+              <h2 class="text-2xl font-bold">🎲 /bet + /stop — aposte e saiba parar</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m3-2-t8-p1">Toda aposta grande tem três perguntas: quanto pode render (<strong class="text-purple-400">upside</strong>), quanto pode custar (<strong class="text-purple-400">downside</strong>) e <strong class="text-purple-400">quando paramos</strong>? /bet estrutura as duas primeiras; /stop trava a terceira antes da emoção entrar.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+              <h4 class="font-bold text-purple-400 mb-4">✓ Aposta adulta</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>"Se em 90 dias não tivermos 10 clientes pagantes, encerramos a linha."</span></li>
+                <li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Gatilho objetivo, decidido quando ninguém está emocionalmente investido.</span></li>
+              </ul>
+            </div>
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+              <h4 class="font-bold text-red-400 mb-4">✗ Projeto zumbi</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>"Vamos dar mais um trimestre" — o quarto seguido, sem critério novo.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Critério de parada que se move conforme os resultados ("quando ficar bom").</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-purple-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/bet /stop para apostar em <aposta>; upside, downside, exposição máxima e kill criteria objetivos com data</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> kill criteria que um estranho conseguiria julgar sem contexto emocional — número + data.</p>
+            </div>
+          </div>
+          <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-red-400 mb-2 flex items-center"><span class="mr-2">⚠️</span> O teste do estranho</h3>
+            <p class="text-neutral-300 text-sm">Mostre seu critério de stop para alguém sem envolvimento: ele saberia dizer, olhando os números friamente, se chegou a hora? Se precisa de "contexto", o critério é decorativo.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- CHECAGEM -->
+        <div data-inema-check="modulo-3-2#q1" class="inema-check bg-dark-800 border border-dark-600 rounded-xl p-6 mb-12">
+          <p class="font-medium mb-4">Auto-verificação rápida (opcional): por que definir critérios ANTES de ver as opções?</p>
+          <div class="inema-check-options space-y-2">
+            <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Para poupar tempo na reunião</button>
+            <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Porque critérios feitos depois se ajustam para coroar a opção favorita</button>
+            <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Não importa — o importante é decidir algo</button>
+          </div>
+          <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+        </div>
+
+        <!-- RESUMO FINAL -->
+        <section class="mb-12">
+          <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumo do Módulo</h2>
+            <div class="space-y-4 mb-8">
+              <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Régua antes da corrida</strong><span class="text-neutral-400"> — critérios e pesos fixados antes das opções entrarem na pista.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Ranking com memória</strong><span class="text-neutral-400"> — /rank, /score e matriz justificam cada posição e célula.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Pareto encurta a fila</strong><span class="text-neutral-400"> — opções dominadas saem antes de gastarem reunião.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Aposta com saída</strong><span class="text-neutral-400"> — upside, downside e kill criteria com número e data.</span></div></div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+              <h3 class="font-semibold text-purple-400 mb-2">Próximo Módulo:</h3>
+              <p class="text-neutral-300">4.1 - Planejamento e arquitetura — transforme a decisão tomada em plano executável.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+              <a href="../trilha4/modulo-4-1.html" class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors">Próximo Módulo →</a>
+            </div>
+          </div>
+        </section>
+
+        <div data-inema-meter="trilha:3" class="inema-meter max-w-md mb-4" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 3">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Trilha 3:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+        <div data-inema-meter="curso" class="inema-meter max-w-md mb-8" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do curso">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Curso:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+
+      </div><!-- /coluna principal -->
+
+      <nav data-inema-toc aria-label="Índice da página" class="hidden lg:block sticky top-24 self-start">
+        <p class="text-sm text-neutral-400 mb-2">Seção <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">8</span></p>
+        <ul class="space-y-1 text-sm">
+          <li><a href="#topico-1" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">1. /criteria + /weights</a></li>
+          <li><a href="#topico-2" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">2. /rank</a></li>
+          <li><a href="#topico-3" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">3. /score</a></li>
+          <li><a href="#topico-4" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">4. /compare</a></li>
+          <li><a href="#topico-5" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">5. /decide</a></li>
+          <li><a href="#topico-6" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">6. /tradeoffmatrix</a></li>
+          <li><a href="#topico-7" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">7. /pareto</a></li>
+          <li><a href="#topico-8" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10">8. /bet + /stop</a></li>
+        </ul>
+      </nav>
+      </div>
+    </div>
+    </article>
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  if (window.INEMA && INEMA.registerCheck) {
+    INEMA.registerCheck('modulo-3-2#q1', {
+      answer: 1,
+      explain: {
+        0: 'Economia de reunião é bônus, não o motivo central.',
+        1: 'Exato — critério posterior é suspeito por definição; a régua precisa existir antes da corrida.',
+        2: 'Decidir sem régua é sortear com passos extras.'
+      }
+    });
+  }
+});
+</script>
+
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>🧭 INEMA Command Language · Curso interativo · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active') ? 'true' : 'false');
+    }
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); } });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlEl = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !htmlEl.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden'); htmlEl.classList.remove('dark');
+    } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      htmlEl.classList.toggle('dark');
+      localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+  </script>
+</body>
+</html>

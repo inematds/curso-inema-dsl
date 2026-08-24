@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INEMA Command Language | Domine os 100 comandos /</title>
+  <meta name="inema-course" content="inema-dsl">
+
+  <!-- ANTI-FOUC: script bloqueante, PRIMEIRO no head, antes do Tailwind e de qualquer estilo -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k];
+          }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = {
+        'inema-dark': { dark: true,  attr: null,        cs: 'dark'  },
+        'claro':      { dark: false, attr: null,        cs: 'light' },
+        'sepia':      { dark: false, attr: 'sepia',     cs: 'light' },
+        'foco':       { dark: null,  attr: 'foco',      cs: null    },
+        'contraste':  { dark: true,  attr: 'contraste', cs: 'dark'  }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr);
+      else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system'
+        ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura'
+          ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif'
+          : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = {
+        emerald: [152, 76, 45], blue: [217, 91, 60], purple: [258, 90, 66],
+        amber: [38, 92, 50], teal: [174, 72, 41], rose: [350, 89, 60]
+      };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + '');
+      s.setProperty('--accent-s', a[1] + '%');
+      s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/learn.css">
+
+  <!-- Manifesto do curso (identico em TODAS as paginas) -->
+  <script type="application/json" data-inema-manifest>
+{"course":"inema-dsl","tracks":[
+{"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
+{"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
+{"n":"3","title":"Crítica & Decisão","modules":[{"id":"3-1","title":"Red team e robustez","topics":8,"href":"curso/trilha3/modulo-3-1.html"},{"id":"3-2","title":"Comparação e decisão","topics":8,"href":"curso/trilha3/modulo-3-2.html"}]},
+{"n":"4","title":"Plano & Execução","modules":[{"id":"4-1","title":"Planejamento e arquitetura","topics":8,"href":"curso/trilha4/modulo-4-1.html"},{"id":"4-2","title":"Execução e operações","topics":8,"href":"curso/trilha4/modulo-4-2.html"}]},
+{"n":"5","title":"Negócio & IA aplicada","modules":[{"id":"5-1","title":"Produto, negócios e monetização","topics":8,"href":"curso/trilha5/modulo-5-1.html"},{"id":"5-2","title":"Prototipagem e agentes de IA","topics":8,"href":"curso/trilha5/modulo-5-2.html"}]},
+{"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
+]}
+</script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Skip link (a11y) */
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 100; background: #111827; color: #FACC15;
+            padding: .5rem 1rem; border-radius: .5rem; }
+    .skip:focus { left: .5rem; top: .5rem; }
+
+    /* Alvos de ancora/foco abaixo do nav sticky */
+    [id] { scroll-margin-top: 88px; }
+
+    :focus-visible { outline: 3px solid var(--accent-2, #38bdf8); outline-offset: 2px; }
+
+    /* Light mode overrides - Parte 1: base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - Parte 2: acentos das 6 trilhas (landing usa todas) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:border-emerald-500\/30:hover { border-color: rgba(5, 150, 105, 0.35); }
+    .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:border-blue-500\/30:hover { border-color: rgba(37, 99, 235, 0.35); }
+    .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:border-purple-500\/30:hover { border-color: rgba(124, 58, 237, 0.35); }
+    .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:border-amber-500\/30:hover { border-color: rgba(217, 119, 6, 0.35); }
+    .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:border-teal-500\/30:hover { border-color: rgba(13, 148, 136, 0.35); }
+    .group:hover .group-hover\:text-teal-400 { color: #0d9488; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:border-rose-500\/30:hover { border-color: rgba(225, 29, 72, 0.35); }
+    .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    /* Light mode - Parte 3: remove gradientes e cores especiais */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .hover\:bg-primary\/20:hover { background-color: rgba(161, 98, 7, 0.15); }
+
+    /* Light mode - Parte 4: nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Dark mode - bordas suavizadas */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Diagramas SVG adaptados ao tema claro */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- NAVIGATION (completa em todas as paginas) -->
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🧭</span>
+            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+          <span class="text-neutral-600">-</span>
+          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
+        </div>
+
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <button type="button" data-inema-journey-open
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm"
+                  title="Sua jornada no curso">
+            <span aria-hidden="true">◷</span>
+            <span class="hidden md:inline">Minha jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
+          </button>
+          <a href="curso/trilha1/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+            <span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span>
+          </a>
+          <a href="curso/trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors">
+            <span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span>
+          </a>
+          <a href="curso/trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors">
+            <span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span>
+          </a>
+          <a href="curso/trilha4/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors hidden lg:inline-flex">
+            Plano
+          </a>
+          <a href="curso/trilha5/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors hidden lg:inline-flex">
+            Negócio
+          </a>
+          <a href="curso/trilha6/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors hidden xl:inline-flex">
+            Maestria
+          </a>
+          <button type="button" data-inema-appearance-toggle="[data-inema-appearance]" aria-expanded="false"
+                  class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1"
+                  title="Aparência e leitura">
+            <svg class="w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 3a1 1 0 011 1v1a1 1 0 11-2 0V4a1 1 0 011-1zm4.24 3.34l-.71.71a1 1 0 101.42 1.42l.7-.71a1 1 0 10-1.41-1.42zM17 9h-1a1 1 0 100 2h1a1 1 0 100-2zm-3.34 4.24a1 1 0 10-1.42 1.42l.71.7a1 1 0 101.41-1.41l-.7-.71zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.95-2.05l.71-.71a1 1 0 111.41 1.41l-.7.71a1 1 0 01-1.42-1.41zM3 10a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zm2.34-4.24l.71.71a1 1 0 11-1.41 1.41l-.71-.7a1 1 0 111.41-1.42z"/>
+              <circle cx="10" cy="10" r="3"/>
+            </svg>
+          </button>
+          <div data-inema-appearance class="inema-appearance-pop">
+            <div class="inema-segment">
+              <button data-inema-set-theme="inema-dark">Escuro</button>
+              <button data-inema-set-theme="claro">Claro</button>
+              <button data-inema-set-theme="sepia">Sépia</button>
+              <button data-inema-set-theme="foco">Foco</button>
+              <button data-inema-set-theme="contraste">Contraste</button>
+            </div>
+            <div class="inema-segment">
+              <button data-inema-set-font="inter">Inter</button>
+              <button data-inema-set-font="system">Sistema</button>
+              <button data-inema-set-font="leitura">Leitura</button>
+            </div>
+            <div class="inema-segment">
+              <button data-inema-set-fontscale="100">A</button>
+              <button data-inema-set-fontscale="112">A+</button>
+              <button data-inema-set-fontscale="125">A++</button>
+            </div>
+            <div class="inema-segment">
+              <button data-inema-set-linewidth="60">Estreito</button>
+              <button data-inema-set-linewidth="68">Médio</button>
+              <button data-inema-set-linewidth="75">Largo</button>
+            </div>
+            <div class="inema-segment">
+              <button data-inema-set-leading="1.45">Compacto</button>
+              <button data-inema-set-leading="1.7">Confortável</button>
+            </div>
+            <div class="inema-accent-grid">
+              <button data-inema-set-accent="emerald" title="Esmeralda"></button>
+              <button data-inema-set-accent="blue" title="Azul"></button>
+              <button data-inema-set-accent="purple" title="Roxo"></button>
+              <button data-inema-set-accent="amber" title="Âmbar"></button>
+              <button data-inema-set-accent="teal" title="Teal"></button>
+              <button data-inema-set-accent="rose" title="Rosa"></button>
+            </div>
+          </div>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="conteudo">
+
+    <!-- HERO -->
+    <header class="bg-gradient-to-br from-yellow-900/20 via-dark-800 to-dark-800 py-16 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mb-4 border border-primary/40">
+          CURSO INTERATIVO · DSL v0.1
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-bold mb-4">🧭 INEMA Command Language</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl mb-2" data-inema-block="landing-hero-p1">
+          Uma linguagem operacional de <strong class="text-primary">100 comandos</strong> que controla como modelos e
+          agentes de IA <strong class="text-primary">pesquisam, verificam, analisam, criticam, decidem, planejam,
+          executam e comunicam</strong>.
+        </p>
+        <p class="text-neutral-400 max-w-3xl mb-8" data-inema-block="landing-hero-p2">
+          Novo aqui? Uma <strong>DSL</strong> (<em>Domain-Specific Language</em>) é uma linguagem pequena feita para um
+          domínio específico — aqui, o domínio é <strong>dirigir IA com precisão</strong>. Você digita
+          <code class="font-mono text-sm bg-dark-700/60 px-1.5 py-0.5 rounded text-sky-400">/comando</code>, e o comando
+          carrega um protocolo completo de trabalho.
+        </p>
+
+        <!-- Progresso do curso + continuar -->
+        <div class="max-w-xl mb-8 bg-dark-800/60 rounded-xl border border-dark-600 p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-semibold text-neutral-300">Seu progresso no curso</span>
+            <span class="text-xs text-neutral-500" data-inema-meter-frac>0 de 94</span>
+          </div>
+          <div data-inema-meter="curso" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do curso">
+            <div class="flex items-center gap-3">
+              <span class="text-primary font-bold text-lg w-14" data-inema-meter-pct>0%</span>
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            </div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-3">
+            <button type="button" onclick="if(window.INEMA&&INEMA.resume){INEMA.resume()}else{location.href='curso/trilha1/modulo-1-1.html'}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 text-neutral-200 hover:bg-dark-600 transition-colors text-sm font-semibold">
+              <span aria-hidden="true">◷</span> Continuar de onde parei
+            </button>
+            <a href="#receitas" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm">
+              Ver receitas rápidas
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-primary">6</div><div class="text-xs text-neutral-400">Trilhas</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-primary">12</div><div class="text-xs text-neutral-400">Módulos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-primary">94</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-primary">~14h</div><div class="text-xs text-neutral-400">Duração</div></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO SVG: um objetivo entra, uma cadeia de comandos opera, uma decisão sai -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+      <div class="rounded-2xl border border-primary/40 bg-dark-900/40 p-3 sm:p-4 overflow-hidden">
+        <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="Diagrama: um objetivo entra na esquerda, passa por dez comandos da linguagem organizados como agentes paralelos, e converge numa decisão verificada à direita">
+          <defs>
+            <linearGradient id="land-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#FACC15"/><stop offset="1" stop-color="#eab308"/>
+            </linearGradient>
+            <filter id="land-glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <pattern id="land-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <circle cx="1.3" cy="1.3" r="1.3" fill="#eab308" opacity="0.12"/>
+            </pattern>
+            <marker id="land-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#FACC15"/></marker>
+            <marker id="land-ahc" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+          </defs>
+          <rect x="0" y="0" width="1000" height="240" fill="url(#land-grid)"/>
+          <g fill="none" stroke="#FACC15" stroke-width="1.8" opacity="0.55">
+            <path d="M196,120 C300,120 320,38 452,38" marker-end="url(#land-ah)"/>
+            <path d="M196,120 C300,120 320,79 452,79" marker-end="url(#land-ah)"/>
+            <path d="M196,120 L452,120" marker-end="url(#land-ah)"/>
+            <path d="M196,120 C300,120 320,161 452,161" marker-end="url(#land-ah)"/>
+            <path d="M196,120 C300,120 320,202 452,202" marker-end="url(#land-ah)"/>
+          </g>
+          <g fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.5">
+            <path d="M588,38  C700,38 720,120 800,120" marker-end="url(#land-ahc)"/>
+            <path d="M588,79  C700,79 720,120 800,120" marker-end="url(#land-ahc)"/>
+            <path d="M588,120 L800,120" marker-end="url(#land-ahc)"/>
+            <path d="M588,161 C700,161 720,120 800,120" marker-end="url(#land-ahc)"/>
+            <path d="M588,202 C700,202 720,120 800,120" marker-end="url(#land-ahc)"/>
+          </g>
+          <g filter="url(#land-glow)">
+            <rect x="40" y="86" width="156" height="68" rx="14" fill="#26201a" stroke="url(#land-grad)" stroke-width="2"/>
+          </g>
+          <text x="118" y="114" text-anchor="middle" fill="#FACC15" font-family="Inter,sans-serif" font-weight="600" font-size="19">Seu objetivo</text>
+          <text x="118" y="136" text-anchor="middle" fill="#fde68a" font-family="Inter,sans-serif" font-size="12.5">em linguagem natural</text>
+          <g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+            <g class="wf-a"><rect x="452" y="22"  width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="43"  text-anchor="middle" fill="#bfe6ff">/truth</text></g>
+            <g class="wf-a"><rect x="452" y="63"  width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="84"  text-anchor="middle" fill="#bfe6ff">/research</text></g>
+            <g class="wf-a"><rect x="452" y="104" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="125" text-anchor="middle" fill="#bfe6ff">/analyze</text></g>
+            <g class="wf-a"><rect x="452" y="145" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="166" text-anchor="middle" fill="#bfe6ff">/redteam</text></g>
+            <g class="wf-a"><rect x="452" y="186" width="136" height="32" rx="9" fill="#0e1b26" stroke="#38bdf8" stroke-width="2"/><text x="520" y="207" text-anchor="middle" fill="#bfe6ff">/decide …</text></g>
+          </g>
+          <g filter="url(#land-glow)">
+            <rect x="800" y="86" width="156" height="68" rx="14" fill="#26201a" stroke="url(#land-grad)" stroke-width="2"/>
+          </g>
+          <text x="878" y="114" text-anchor="middle" fill="#FACC15" font-family="Inter,sans-serif" font-weight="600" font-size="17">Decisão com</text>
+          <text x="878" y="136" text-anchor="middle" fill="#fde68a" font-family="Inter,sans-serif" font-size="12.5">confiança declarada</text>
+        </svg>
+        <p class="text-xs text-neutral-500 mt-2 text-center">Ilustração do fluxo típico: você dá o objetivo, os comandos executam protocolos especializados em cadeia.</p>
+      </div>
+    </div>
+
+    <!-- TRILHAS -->
+    <section id="trilhas" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <h2 class="text-2xl font-bold mb-2">As 6 trilhas</h2>
+      <p class="text-neutral-400 mb-8 max-w-3xl">Cada família de comandos virou uma trilha. Comece pela Fundamentos se é a primeira vez com a linguagem; se já usa comandos no dia a dia, entre direto na trilha que resolve seu gargalo.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="curso/trilha1/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full">TRILHA 1</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h20</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-emerald-400 transition-colors">🧭 Fundamentos da Linguagem</h3>
+          <p class="text-neutral-400 text-sm mb-4">Sintaxe, as 10 regras, cadeias e presets — e a família de verdade e verificação que sustenta todo o resto.</p>
+          <div data-inema-meter="trilha:1" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 1">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 15</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="curso/trilha2/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-blue-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full">TRILHA 2</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h30</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">🛰️ Pesquisa &amp; Análise</h3>
+          <p class="text-neutral-400 text-sm mb-4">Investigar estruturado, detectar sinais fracos, mapear ecossistemas e transformar informação bruta em visão coerente.</p>
+          <div data-inema-meter="trilha:2" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 2">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 16</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="curso/trilha3/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full">TRILHA 3</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h30</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors">🥊 Crítica &amp; Decisão</h3>
+          <p class="text-neutral-400 text-sm mb-4">Red team pessoal, premortem, vieses — e o arsenal de decisão: rank, score, matriz, Pareto e apostas.</p>
+          <div data-inema-meter="trilha:3" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 3">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 16</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="curso/trilha4/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full">TRILHA 4</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h30</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">📐 Plano &amp; Execução</h3>
+          <p class="text-neutral-400 text-sm mb-4">Blueprint, roadmap, arquitetura e SOPs — depois execute, priorize, monitore e revise contra critérios.</p>
+          <div data-inema-meter="trilha:4" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 4">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 16</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="curso/trilha5/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-teal-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full">TRILHA 5</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h30</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-teal-400 transition-colors">💼 Negócio &amp; IA aplicada</h3>
+          <p class="text-neutral-400 text-sm mb-4">Mercado, oferta, pricing e moat — e a construção de produtos e agentes de IA com eval e guardrails.</p>
+          <div data-inema-meter="trilha:5" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 5">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 16</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="curso/trilha6/index.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-6 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full">TRILHA 6</span>
+            <span class="text-xs text-neutral-500">2 módulos · ~2h15</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-rose-400 transition-colors">🗣️ Comunicação &amp; Maestria</h3>
+          <p class="text-neutral-400 text-sm mb-4">Brief executivo, ensino progressivo e adaptação por audiência — mais chains, presets e o roadmap v0.2.</p>
+          <div data-inema-meter="trilha:6" class="inema-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 6">
+            <div class="flex items-center gap-2">
+              <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+              <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 15</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <h2 class="text-2xl font-bold mb-8">Como funciona estudar aqui</h2>
+      <div class="space-y-6">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center"><span class="text-primary font-bold">1</span></div>
+          <div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+            <h4 class="font-semibold text-white mb-2">Leia um tópico de cada vez</h4>
+            <p class="text-sm text-neutral-400 mb-2">Cada tópico ensina um comando ou conceito com exemplo pronto para copiar e rodar no seu agente favorito.</p>
+            <p class="text-neutral-300 text-sm">Grife trechos importantes selecionando o texto, e registre dúvida com um clique onde ela nasceu.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center"><span class="text-primary font-bold">2</span></div>
+          <div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+            <h4 class="font-semibold text-white mb-2">Marque como lido e acompanhe o progresso</h4>
+            <p class="text-neutral-300 text-sm">O progresso aparece em três níveis — módulo, trilha e curso inteiro — e fica salvo no navegador. Nada de cadastro.</p>
+          </div>
+        </div>
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center"><span class="text-primary font-bold">3</span></div>
+          <div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+            <h4 class="font-semibold text-white mb-2">Volte pela Minha Jornada</h4>
+            <p class="text-neutral-300 text-sm">O painel reúne onde você parou, suas dúvidas abertas e suas notas — com export/import em <code class="font-mono text-xs">.json</code> para levar seu estudo para outro computador.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECEITAS COPY-RUN -->
+    <section id="receitas" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <h2 class="text-2xl font-bold mb-2">Receitas para usar ainda hoje</h2>
+      <p class="text-neutral-400 mb-6 max-w-3xl">Composições oficiais da própria linguagem. Cole a linha no seu agente, troque o que está marcado, e compare a resposta com o padrão de saída esperado.</p>
+
+      <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <h3 class="text-lg font-semibold text-primary mb-1">🎯 Decisão confiável</h3>
+          <p class="text-sm text-neutral-400">Objetivo: transformar uma escolha difusa em recomendação com evidência, lacunas explícitas e crítica adversarial.</p>
+        </div>
+        <div class="p-6">
+          <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/research /truth /gaps /pushback /rank criteria=<seus critérios separados por vírgula> /decide sobre <a decisão que você precisa tomar></pre>
+          <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a resposta deve separar fatos de inferências, listar lacunas, conter uma contestação séria da sua ideia e terminar num ranking justificado com recomendação final.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+        <div class="p-6 border-b border-dark-600">
+          <h3 class="text-lg font-semibold text-teal-400 mb-1">🏗️ Arquitetura de agente</h3>
+          <p class="text-sm text-neutral-400">Objetivo: especificar um agente completo antes de escrever a primeira linha de prompt.</p>
+        </div>
+        <div class="p-6">
+          <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/agent /tools /memory /guardrails /eval /integrate para <descreva em 1 frase o que o agente deve fazer></pre>
+          <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> você deve receber objetivo, ferramentas com critérios de uso, política de memória, limites operacionais, casos de teste e plano de integração.</p>
+        </div>
+      </div>
+
+      <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+        <div class="p-6 border-b border-dark-600">
+          <h3 class="text-lg font-semibold text-purple-400 mb-1">🛡️ Auditoria de veracidade</h3>
+          <p class="text-sm text-neutral-400">Objetivo: checar um texto cheio de alegações antes de publicar ou decidir com base nele.</p>
+        </div>
+        <div class="p-6">
+          <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/factcheck /confidence /provenance no texto: <cole o texto ou anexe o arquivo></pre>
+          <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> cada alegação classificada (confirmada, imprecisa, falsa, inconclusiva, opinativa), nível de confiança geral e origem de cada dado crítico.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESUMO / CTA FINAL -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div class="bg-gradient-to-br from-yellow-900/20 via-dark-800 to-dark-800 rounded-xl border border-primary/40 p-8">
+        <h2 class="text-2xl font-bold mb-4">🎓 Por onde começar</h2>
+        <div class="space-y-3 mb-8">
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">✓</span>
+            <div><strong class="text-white">Nunca usou comandos /</strong><span class="text-neutral-400"> — comece pela Trilha 1, módulo 1.1: em 65 minutos você domina a gramática inteira.</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">✓</span>
+            <div><strong class="text-white">Já usa IA no trabalho</strong><span class="text-neutral-400"> — vá direto às trilhas que atacam seu gargalo: pesquisa ruim (T2), decisões frágeis (T3), execução caótica (T4).</span></div>
+          </div>
+          <div class="flex items-start space-x-3">
+            <span class="text-primary mt-1">✓</span>
+            <div><strong class="text-white">Constrói produtos e agentes</strong><span class="text-neutral-400"> — a Trilha 5 cobre do MVP ao guardrail, com eval antes de escalar.</span></div>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="curso/trilha1/index.html" class="flex-1 text-center px-6 py-3 bg-primary text-gray-900 rounded-lg font-bold hover:bg-yellow-300 transition-colors">
+            Começar pela Trilha 1 →
+          </a>
+          <a href="ref/INEMA_Command_Language_DSL_v0.1.md" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">
+            Ler a referência original
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-dark-600 py-8 mt-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>🧭 INEMA Command Language — Curso interativo · 2026</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS: nucleo v1 -> learn.js -> init -->
+  <script>
+    // Theme toggle (nucleo v1)
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlEl = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !htmlEl.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      htmlEl.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      htmlEl.classList.toggle('dark');
+      localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+  <script src="assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') {
+      window.INEMA.init();
+    }
+  </script>
+</body>
+</html>
