@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 6.2 — Meta-comandos e maestria | INEMA Command Language</title>
+  <meta name="inema-course" content="inema-dsl">
+
+  <!-- ANTI-FOUC -->
+  <script>
+  (function () {
+    try {
+      var html = document.documentElement;
+      var DEF = { theme: 'inema-dark', font: 'inter', fontScale: 100, lineWidth: 68, leading: 1.7, accent: 'emerald' };
+      function clone(o) { var r = {}; for (var x in o) r[x] = o[x]; return r; }
+      var p = clone(DEF);
+      try {
+        var raw = localStorage.getItem('inema.prefs');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') { for (var k in DEF) if (parsed[k] != null) p[k] = parsed[k]; }
+        } else {
+          var legacy = localStorage.getItem('theme');
+          if (legacy === 'light') p.theme = 'claro';
+          else if (legacy === 'dark') p.theme = 'inema-dark';
+        }
+      } catch (e) { p = clone(DEF); }
+      var THEMES = {
+        'inema-dark': { dark: true, attr: null, cs: 'dark' },
+        'claro': { dark: false, attr: null, cs: 'light' },
+        'sepia': { dark: false, attr: 'sepia', cs: 'light' },
+        'foco': { dark: null, attr: 'foco', cs: null },
+        'contraste': { dark: true, attr: 'contraste', cs: 'dark' }
+      };
+      var t = THEMES[p.theme] || THEMES['inema-dark'];
+      if (t.dark === true) html.classList.add('dark');
+      else if (t.dark === false) html.classList.remove('dark');
+      if (t.attr) html.setAttribute('data-theme', t.attr); else html.removeAttribute('data-theme');
+      html.style.colorScheme = (t.cs ? t.cs : (html.classList.contains('dark') ? 'dark' : 'light'));
+      html.setAttribute('data-font', p.font || 'inter');
+      html.setAttribute('data-accent', p.accent || 'emerald');
+      var s = html.style;
+      var scale = (+p.fontScale || 100);
+      s.setProperty('--inema-font-scale', (scale / 100).toString());
+      s.setProperty('font-size', scale + '%');
+      s.setProperty('--measure', (+p.lineWidth || 68) + 'ch');
+      s.setProperty('--lh-body', (+p.leading || 1.7).toString());
+      var fam = p.font === 'system' ? 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+        : (p.font === 'leitura' ? '"Atkinson Hyperlegible", "Inter", system-ui, sans-serif' : '"Inter", system-ui, sans-serif');
+      s.setProperty('--font-body', fam);
+      var ACC = { emerald: [152,76,45], blue: [217,91,60], purple: [258,90,66], amber: [38,92,50], teal: [174,72,41], rose: [350,89,60] };
+      var a = ACC[p.accent] || ACC.emerald;
+      s.setProperty('--accent-h', a[0] + ''); s.setProperty('--accent-s', a[1] + '%'); s.setProperty('--accent-l', a[2] + '%');
+      s.setProperty('--accent', 'hsl(' + a[0] + ' ' + a[1] + '% ' + a[2] + '%)');
+    } catch (err) {
+      try { document.documentElement.classList.add('dark'); document.documentElement.style.colorScheme = 'dark'; } catch (e) {}
+    }
+  })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/learn.css">
+
+  <script type="application/json" data-inema-manifest>
+{"course":"inema-dsl","tracks":[
+{"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
+{"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
+{"n":"3","title":"Crítica & Decisão","modules":[{"id":"3-1","title":"Red team e robustez","topics":8,"href":"curso/trilha3/modulo-3-1.html"},{"id":"3-2","title":"Comparação e decisão","topics":8,"href":"curso/trilha3/modulo-3-2.html"}]},
+{"n":"4","title":"Plano & Execução","modules":[{"id":"4-1","title":"Planejamento e arquitetura","topics":8,"href":"curso/trilha4/modulo-4-1.html"},{"id":"4-2","title":"Execução e operações","topics":8,"href":"curso/trilha4/modulo-4-2.html"}]},
+{"n":"5","title":"Negócio & IA aplicada","modules":[{"id":"5-1","title":"Produto, negócios e monetização","topics":8,"href":"curso/trilha5/modulo-5-1.html"},{"id":"5-2","title":"Prototipagem e agentes de IA","topics":8,"href":"curso/trilha5/modulo-5-2.html"}]},
+{"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
+]}
+</script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+    .skip { position: absolute; left: -9999px; top: 0; z-index: 100; background: #111827; color: #FACC15; padding: .5rem 1rem; border-radius: .5rem; }
+    .skip:focus { left: .5rem; top: .5rem; }
+    [id] { scroll-margin-top: 88px; }
+    :focus-visible { outline: 3px solid var(--accent-2, #38bdf8); outline-offset: 2px; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - acentos das trilhas */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217, 119, 6, 0.18); }
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .bg-teal-900\/20 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .bg-primary\/20 { background-color: rgba(161, 98, 7, 0.15); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen">
+
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-14">
+        <div class="flex items-center space-x-4">
+          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
+            <span class="text-2xl">🧭</span>
+            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+          </a>
+          <span class="text-neutral-600">|</span>
+          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
+          <span class="text-neutral-600">-</span>
+          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
+        </div>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Sua jornada no curso">
+            <span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
+            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
+          </button>
+          <a href="../trilha1/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+          <a href="../trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span></a>
+          <a href="../trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span></a>
+          <a href="../trilha4/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Plano</a>
+          <a href="../trilha5/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Negócio</a>
+          <a href="../trilha6/index.html" class="hidden xl:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10 px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Maestria</a>
+          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+<main id="conteudo">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label="Breadcrumb">
+      <div class="flex items-center space-x-2 text-sm text-neutral-400">
+        <a href="../../index.html" class="hover:text-rose-400">Início</a><span>/</span>
+        <a href="index.html" class="hover:text-rose-400">Trilha 6</a><span>/</span>
+        <span class="text-rose-400">Módulo 6.2</span>
+      </div>
+    </nav>
+
+    <article id="modulo-6-2" data-inema-module="6-2" data-inema-track="6">
+    <header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">MODULO 6.2</span>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4">🎛️ Meta-comandos e maestria</h1>
+        <p class="text-lg text-neutral-400 max-w-3xl" data-inema-block="m6-2-head">Os três comandos que operam sobre todos os outros — /mode, /chain e /preset —, as cinco receitas compostas do documento, a estrutura YAML de um comando, as regras de precedência e o que vem na v0.2.</p>
+        <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">7</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">65</div><div class="text-xs text-neutral-400">Minutos</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Avançado</div><div class="text-xs text-neutral-400">Nível</div></div>
+          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-rose-400">Teoria+Prática</div><div class="text-xs text-neutral-400">Tipo</div></div>
+        </div>
+        <div data-inema-meter="modulo:6-2" class="inema-meter mt-6 max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do módulo 6.2">
+          <div class="flex items-center gap-3">
+            <span class="text-rose-400 font-bold w-12" data-inema-meter-pct>0%</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 7</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-10">
+      <div><!-- COLUNA PRINCIPAL -->
+
+        <!-- TOPICO 1 /mode -->
+        <section id="topico-1" data-inema-topic="modulo-6-2#topico-1" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">1</span>
+              <h2 class="text-2xl font-bold">🎚️ /mode — perfis globais de comportamento</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t1-p1">Ativa um <strong class="text-rose-400">perfil persistente de comportamento</strong> para a execução atual. Os comandos seguintes herdam o modo sem que você repita: um <code class="font-mono text-xs">/mode conservador</code> faz o /research citar mais fontes, o /decide pedir mais evidência e o /estimate alargar a faixa.</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="text-left text-rose-400 border-b border-dark-600">
+                  <th class="py-3 px-4">Modo</th><th class="py-3 px-4">O que muda nos comandos</th><th class="py-3 px-4">Quando usar</th>
+                </tr>
+              </thead>
+              <tbody class="text-neutral-300 divide-y divide-dark-600">
+                <tr><td class="py-3 px-4">conservador</td><td class="py-3 px-4">Mais verificação, faixas mais largas, recomendações com plano B</td><td class="py-3 px-4">Decisão irreversível, dinheiro em jogo, público externo</td></tr>
+                <tr><td class="py-3 px-4">exploratório</td><td class="py-3 px-4">Mais alternativas, menos filtro, tolera hipóteses</td><td class="py-3 px-4">Início de projeto, brainstorming, /discover e /future</td></tr>
+                <tr><td class="py-3 px-4">executivo</td><td class="py-3 px-4">Saída curta, decisão primeiro, detalhe sob demanda</td><td class="py-3 px-4">Rotina de operação, /brief, /next, /review</td></tr>
+              </tbody>
+            </table>
+            <p class="text-xs text-neutral-500 mt-2">Os três modos do documento. A v0.2 prevê modos nomeados pelo time (ver tópico 7).</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/mode conservador
+/research &lt;tema&gt; /truth /gaps
+/decide entre &lt;A&gt; e &lt;B&gt;</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> o /decide devolve plano B e evidência sem você ter pedido — sinal de que o modo foi herdado. Troque para /mode executivo e rode de novo: a saída encolhe.</p>
+            </div>
+          </div>
+          <div class="bg-dark-700/40 border-l-4 border-rose-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-rose-400">Novo aqui?</strong> <strong>Persistente</strong> aqui significa "vale até ser trocado explicitamente" — não "vale para sempre". O modo dura a execução atual; um novo /mode substitui o anterior, e o runtime volta ao padrão quando a sessão acaba.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 2 /chain -->
+        <section id="topico-2" data-inema-topic="modulo-6-2#topico-2" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">2</span>
+              <h2 class="text-2xl font-bold">⛓️ /chain — encadeamento com passagem de saída</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t2-p1">Executa comandos em <strong class="text-rose-400">ordem explícita, passando a saída relevante de um para o próximo</strong>. A composição em linha do módulo 1.1 (<code class="font-mono text-xs">/truth /gaps /rank</code>) aplica todos ao mesmo insumo; o /chain faz o /gaps trabalhar sobre o que o /truth produziu — e o /rank sobre o que o /gaps produziu.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-rose-900/20 rounded-xl border border-rose-500/30 p-6">
+              <h4 class="font-bold text-rose-400 mb-4">✓ Chain de verdade</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-rose-400">✓</span><span><code class="font-mono text-xs">/chain(/research -&gt; /truth -&gt; /pushback -&gt; /decide)</code>: o pushback ataca só o que sobreviveu ao truth.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-rose-400">✓</span><span>Saída de cada etapa visível — dá para auditar onde a conclusão nasceu.</span></li>
+              </ul>
+            </div>
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+              <h4 class="font-bold text-red-400 mb-4">✗ Chain de enfeite</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><code class="font-mono text-xs">/chain(/research -&gt; /brief)</code> quando /research /brief em linha faria o mesmo — não há dependência real entre as etapas.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Cadeia de 9 comandos onde ninguém consegue dizer o que a etapa 5 recebeu.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/chain(/market -&gt; /customer -&gt; /gaps -&gt; /offer) para &lt;ideia&gt;; mostre a saída de cada etapa antes de passar para a próxima e diga o que cada etapa consumiu da anterior</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a seção "o que consumiu da anterior" não está vazia em nenhuma etapa — se está, a etapa não precisava estar na cadeia.</p>
+            </div>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Dica prática</h3>
+            <p class="text-neutral-300 text-sm">Cadeias longas cansam de ler. Acima de 5 comandos, quebre em duas cadeias com um /brief no meio — ou promova a cadeia a /preset (próximo tópico).</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 3 /preset -->
+        <section id="topico-3" data-inema-topic="modulo-6-2#topico-3" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">3</span>
+              <h2 class="text-2xl font-bold">📦 /preset — pacotes oficiais de comandos</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t3-p1">Expande um <strong class="text-rose-400">nome curto para uma cadeia predefinida</strong> de comandos com parâmetros. É o /chain que ganhou nome: <code class="font-mono text-xs">/preset decisao-confiavel</code> em vez de digitar seis comandos — e, mais importante, em vez de cada pessoa do time digitar seis comandos diferentes.</p>
+          <div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🏷️</span> Quando uma cadeia merece virar preset</h3>
+            <ul class="space-y-2 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>Repetição:</strong> a mesma sequência rodou 3+ vezes no último mês.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>Parâmetros estáveis:</strong> os mesmos critérios, o mesmo nível, o mesmo público — mudando só o insumo.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>Risco de omissão:</strong> alguém já pulou uma etapa e se arrependeu (o /premortem que ninguém rodou).</span></li>
+            </ul>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/preset decisao-confiavel sobre &lt;decisão&gt;
+
+# equivale a:
+/chain(/research -&gt; /truth -&gt; /gaps -&gt; /pushback -&gt; /rank criteria=impacto,custo,risco -&gt; /decide)</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a saída do preset é idêntica à da cadeia expandida — se difere, o preset não está definido como você achava. Peça "/preset decisao-confiavel --expandir" para ver a cadeia.</p>
+            </div>
+          </div>
+          <div class="bg-dark-700/40 border-l-4 border-rose-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-rose-400">Novo aqui?</strong> <strong>Preset oficial</strong> é um preset definido e versionado pela linguagem (ou pelo time), com nome reservado — diferente de um atalho pessoal. A v0.1 lista cinco receitas candidatas a preset oficial; a v0.2 promete formalizá-las (tópico 7).</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 4 As 5 receitas -->
+        <section id="topico-4" data-inema-topic="modulo-6-2#topico-4" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">4</span>
+              <h2 class="text-2xl font-bold">📚 As 5 receitas compostas do documento</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t4-p1">O documento fecha com cinco cadeias recomendadas. Elas não são exemplos — são o <strong class="text-rose-400">mapa do curso inteiro</strong>: cada uma atravessa três ou quatro trilhas e mostra a ordem em que as famílias conversam.</p>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-neutral-200">Composição recomendada — INEMA Command Language v0.1</h3></div>
+            <pre class="font-mono text-xs sm:text-sm bg-dark-900/70 p-4 overflow-x-auto text-neutral-300 whitespace-pre"># Decisão confiável
+/research /truth /gaps /pushback /rank /decide
+
+# Construção de produto
+/market /customer /gaps /offer /MVP /prototype /eval
+
+# Arquitetura de agente
+/agent /tools /memory /guardrails /eval /integrate
+
+# Execução de projeto
+/blueprint /dependencies /priority /parallel /execute /monitor /review
+
+# Tese de negócio
+/truth /market /pushback /businessmodel /moat /growth /bet</pre>
+          </div>
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="text-left text-rose-400 border-b border-dark-600">
+                  <th class="py-3 px-4">Receita</th><th class="py-3 px-4">Trilhas que atravessa</th><th class="py-3 px-4">O padrão escondido</th>
+                </tr>
+              </thead>
+              <tbody class="text-neutral-300 divide-y divide-dark-600">
+                <tr><td class="py-3 px-4">Decisão confiável</td><td class="py-3 px-4">T2 → T1 → T3</td><td class="py-3 px-4">Verificar antes de atacar, atacar antes de decidir</td></tr>
+                <tr><td class="py-3 px-4">Construção de produto</td><td class="py-3 px-4">T5.1 → T2 → T5.2</td><td class="py-3 px-4">Mercado antes de oferta, oferta antes de código, eval no fim</td></tr>
+                <tr><td class="py-3 px-4">Arquitetura de agente</td><td class="py-3 px-4">T5.2</td><td class="py-3 px-4">Eval antes de integrate — controlado antes de conectado</td></tr>
+                <tr><td class="py-3 px-4">Execução de projeto</td><td class="py-3 px-4">T4</td><td class="py-3 px-4">Plano → ordem → ação → anel monitor/review</td></tr>
+                <tr><td class="py-3 px-4">Tese de negócio</td><td class="py-3 px-4">T1 → T5 → T3 → T5 → T3</td><td class="py-3 px-4">Fato, mercado, ataque, modelo, aposta com saída</td></tr>
+              </tbody>
+            </table>
+            <p class="text-xs text-neutral-500 mt-2">Repare: /pushback aparece em duas e /eval em duas. Ataque e avaliação são os passos que as pessoas pulam — o documento os embute para que ninguém pule.</p>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/chain(/truth -&gt; /market -&gt; /pushback -&gt; /businessmodel -&gt; /moat -&gt; /growth -&gt; /bet) para &lt;ideia de negócio&gt;; ao final, diga qual etapa mais mudou a conclusão</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a resposta final é diferente do que você pensava antes de rodar — se for igual, uma das etapas (quase sempre o /pushback) foi executada de forma complacente.</p>
+            </div>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 5 Estrutura YAML -->
+        <section id="topico-5" data-inema-topic="modulo-6-2#topico-5" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">5</span>
+              <h2 class="text-2xl font-bold">🧬 Estrutura interna YAML de um comando</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t5-p1">Por baixo de cada barra há uma definição. O documento sugere uma <strong class="text-rose-400">estrutura YAML de nove campos</strong> para qualquer comando — e é ela que faz a linguagem ser executável por um runtime, não só legível por humanos.</p>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-neutral-200">Estrutura interna sugerida — exemplo: /truth</h3></div>
+            <pre class="font-mono text-xs sm:text-sm bg-dark-900/70 p-4 overflow-x-auto text-neutral-300 whitespace-pre">name: /truth
+family: verification
+version: 0.1
+purpose: separar fatos, inferências, hipóteses e desconhecidos
+inputs: [query, context]
+tools: [search:auto]
+rules:
+  - verify unstable claims
+  - never present inference as verified fact
+output_schema:
+  - verified_facts
+  - inferences
+  - unknowns
+  - confidence
+acceptance:
+  - critical claims are supported
+fallback:
+  - state what could not be verified</pre>
+          </div>
+          <div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center"><span class="mr-2">🔍</span> Os três campos que separam comando de prompt</h3>
+            <ul class="space-y-2 text-neutral-300 text-sm">
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>output_schema:</strong> o formato da saída é fixo — dá para testar, encadear e alimentar outro comando.</span></li>
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>acceptance:</strong> critério de "cumpriu" declarado — o runtime sabe quando repetir ou escalar (Módulo 1.1, tópico 7).</span></li>
+              <li class="flex items-start space-x-2"><span class="text-rose-400 mt-1">•</span><span><strong>fallback:</strong> o comportamento quando não dá — "diga o que não pôde verificar" em vez de inventar.</span></li>
+            </ul>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/spec no formato YAML acima para um comando novo: /&lt;nome&gt; da família &lt;família&gt;; preencha os 9 campos, com output_schema de no máximo 5 itens e um fallback honesto</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> o fallback nunca é "tente novamente"; é um comportamento observável ("declare X como não verificado", "escale para humano").</p>
+            </div>
+          </div>
+          <div class="bg-dark-700/40 border-l-4 border-rose-500/40 rounded-r-lg px-4 py-3 mb-6">
+            <p class="text-sm text-neutral-300"><strong class="text-rose-400">Novo aqui?</strong> <strong>YAML</strong> é um formato de texto para descrever dados estruturados, legível por humanos e por máquinas — chave: valor, listas com hífen, indentação como hierarquia. É o formato natural para definir comandos porque um agente lê e uma pessoa revisa o mesmo arquivo.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 6 Precedência -->
+        <section id="topico-6" data-inema-topic="modulo-6-2#topico-6" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">6</span>
+              <h2 class="text-2xl font-bold">⚖️ Precedência e resolução de conflitos</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-4 leading-relaxed" data-inema-block="m62-t6-p1">O que acontece quando <code class="font-mono text-xs">/mode conservador</code> está ativo, você chama um <code class="font-mono text-xs">/preset</code> que embute modo exploratório, e dentro dele um comando tem parâmetro explícito? A resposta da v0.1 é uma regra só: <strong class="text-rose-400">o mais específico vence</strong>.</p>
+          <div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+            <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="Diagrama de precedência em camadas concêntricas: no anel externo o modo global, no anel do meio o preset, dentro dele a cadeia de comandos, e no centro o comando com seus parâmetros; uma legenda à direita indica que o mais interno vence em conflito">
+              <defs>
+                <linearGradient id="m62-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fb7185"/><stop offset="1" stop-color="#f43f5e"/></linearGradient>
+                <filter id="m62-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <marker id="m62-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
+              </defs>
+              <rect x="60" y="20" width="520" height="200" rx="18" fill="#2a0f16" stroke="#fb7185" stroke-width="1.5" opacity="0.9"/>
+              <text x="80" y="42" fill="#fda4af" font-family="Inter,sans-serif" font-size="12" font-weight="600">/mode — perfil global</text>
+              <rect x="100" y="55" width="440" height="150" rx="14" fill="#2a0f16" stroke="#fb7185" stroke-width="1.5"/>
+              <text x="120" y="77" fill="#fda4af" font-family="Inter,sans-serif" font-size="12" font-weight="600">/preset — pacote nomeado</text>
+              <rect x="140" y="90" width="360" height="100" rx="12" fill="#0e1b26" stroke="#38bdf8" stroke-width="1.5"/>
+              <text x="160" y="112" fill="#7dd3fc" font-family="Inter,sans-serif" font-size="12" font-weight="600">/chain — ordem e passagem de saída</text>
+              <g filter="url(#m62-glow)"><rect x="180" y="125" width="280" height="50" rx="10" fill="#0e1b26" stroke="url(#m62-grad)" stroke-width="2"/></g>
+              <text x="320" y="147" text-anchor="middle" fill="#fecdd3" font-family="Inter,sans-serif" font-size="13" font-weight="600">/comando [parâmetros]</text>
+              <text x="320" y="165" text-anchor="middle" fill="#fda4af" font-family="Inter,sans-serif" font-size="11">o mais específico</text>
+              <path d="M640,120 L600,120" fill="none" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#m62-ah)"/>
+              <text x="660" y="100" fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" font-weight="600">Regra de precedência</text>
+              <text x="660" y="124" fill="#a8a29e" font-family="Inter,sans-serif" font-size="12">parâmetro explícito &gt; comando &gt; chain</text>
+              <text x="660" y="144" fill="#a8a29e" font-family="Inter,sans-serif" font-size="12">&gt; preset &gt; mode &gt; padrão do runtime</text>
+              <text x="660" y="174" fill="#7dd3fc" font-family="Inter,sans-serif" font-size="11.5">o anel de dentro sempre vence o de fora</text>
+            </svg>
+            <p class="text-xs text-neutral-500 mt-2 text-center">Ilustrativo: anéis concêntricos — o de dentro (parâmetro explícito) sempre vence o de fora (modo global).</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-rose-900/20 rounded-xl border border-rose-500/30 p-6">
+              <h4 class="font-bold text-rose-400 mb-4">✓ Conflito resolvido</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-rose-400">✓</span><span><code class="font-mono text-xs">/mode conservador</code> + <code class="font-mono text-xs">/estimate faixa=estreita</code> → faixa estreita: parâmetro explícito vence o modo.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-rose-400">✓</span><span>Preset define <code class="font-mono text-xs">criteria=impacto,custo</code>; você passa <code class="font-mono text-xs">criteria=risco</code> → risco: a chamada vence o preset.</span></li>
+              </ul>
+            </div>
+            <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+              <h4 class="font-bold text-red-400 mb-4">✗ Conflito silencioso</h4>
+              <ul class="space-y-3 text-neutral-300">
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Dois /mode na mesma sessão sem saber qual está ativo — o último vence, mas ninguém lembra qual foi.</span></li>
+                <li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Preset que muda o modo global sem avisar: você sai do preset e o /mode continua trocado.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/mode conservador
+/preset exploracao-rapida sobre &lt;tema&gt;
+/estimate para &lt;tarefa&gt; faixa=estreita
+
+# depois pergunte: qual modo está ativo agora e por quê?</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a resposta diz qual regra de precedência decidiu cada caso — e informa que o /mode conservador voltou a valer após o preset (ou avisa que não voltou, o que é um bug de v0.1 documentado no tópico 7).</p>
+            </div>
+          </div>
+          <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-red-400 mb-2 flex items-center"><span class="mr-2">⚠️</span> Precedência formal ainda não existe na v0.1</h3>
+            <p class="text-neutral-300 text-sm">A regra "específico vence" é a convenção recomendada, não uma especificação testada. A v0.2 promete precedência formal (próximo tópico). Até lá, quando o resultado surpreender, pergunte ao runtime qual modo e quais parâmetros estavam ativos — não assuma.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- TOPICO 7 Roadmap v0.2 -->
+        <section id="topico-7" data-inema-topic="modulo-6-2#topico-7" class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-4">
+              <span class="flex items-center justify-center w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 font-bold text-xl">7</span>
+              <h2 class="text-2xl font-bold">🛣️ Roadmap v0.2 — o que vem depois</h2>
+            </div>
+            <button type="button" data-inema-doubt-toggle aria-pressed="false" title="Marcar dúvida neste tópico" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-700 border border-dark-600 text-neutral-300 hover:bg-dark-600 transition-colors text-sm flex-shrink-0"><span aria-hidden="true">?</span><span>Tenho dúvida</span></button>
+          </div>
+          <p class="text-neutral-300 mb-6 leading-relaxed" data-inema-block="m62-t7-p1">O documento termina com honestidade: a v0.1 é uma linguagem <strong class="text-rose-400">operacional, não formal</strong>. Oito itens estão listados para a v0.2 — e cada um responde a uma fragilidade que você provavelmente já sentiu neste curso.</p>
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="text-left text-rose-400 border-b border-dark-600">
+                  <th class="py-3 px-4">Item da v0.2</th><th class="py-3 px-4">Problema que resolve</th><th class="py-3 px-4">Onde você sentiu</th>
+                </tr>
+              </thead>
+              <tbody class="text-neutral-300 divide-y divide-dark-600">
+                <tr><td class="py-3 px-4">Aliases</td><td class="py-3 px-4">/SOP vs. /sop vs. /procedimento — o mesmo comando com nomes diferentes</td><td class="py-3 px-4">Módulo 4.1</td></tr>
+                <tr><td class="py-3 px-4">Tipos de parâmetros</td><td class="py-3 px-4">criteria= aceita qualquer texto; nada valida</td><td class="py-3 px-4">Módulo 3.2</td></tr>
+                <tr><td class="py-3 px-4">Schemas de saída</td><td class="py-3 px-4">A saída de /truth muda de forma entre execuções — quebra o /chain</td><td class="py-3 px-4">Módulo 6.2, tópico 2</td></tr>
+                <tr><td class="py-3 px-4">Precedência formal</td><td class="py-3 px-4">"Específico vence" é convenção, não regra testada</td><td class="py-3 px-4">Módulo 6.2, tópico 6</td></tr>
+                <tr><td class="py-3 px-4">Níveis de permissão</td><td class="py-3 px-4">/execute e /automate podem agir sem autorização declarada</td><td class="py-3 px-4">Módulo 5.2 (/guardrails)</td></tr>
+                <tr><td class="py-3 px-4">Políticas de ferramentas</td><td class="py-3 px-4">tools: [search:auto] não diz quando NÃO buscar</td><td class="py-3 px-4">Módulo 5.2 (/tools)</td></tr>
+                <tr><td class="py-3 px-4">Presets oficiais</td><td class="py-3 px-4">As 5 receitas ainda são texto, não pacotes invocáveis</td><td class="py-3 px-4">Módulo 6.2, tópico 3</td></tr>
+                <tr><td class="py-3 px-4">Testes de conformidade</td><td class="py-3 px-4">Não há como provar que um runtime implementa /truth corretamente</td><td class="py-3 px-4">Módulo 1.1, tópico 7</td></tr>
+              </tbody>
+            </table>
+            <p class="text-xs text-neutral-500 mt-2">Cada linha da v0.2 é uma fragilidade da v0.1 com nome — o documento não esconde nenhuma.</p>
+          </div>
+          <div class="space-y-6 mb-6">
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">1</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-white mb-1">Use a v0.1 como está</h4><p class="text-sm text-neutral-400">A linguagem funciona hoje em qualquer modelo: os comandos são convenção de prompt. As cinco receitas e os três meta-comandos já mudam a qualidade do que você recebe.</p></div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">2</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-white mb-1">Documente onde ela falhou com você</h4><p class="text-sm text-neutral-400">Toda vez que um comando devolveu algo fora do esperado, anote: comando, parâmetros, modo ativo, saída. É o material da v0.2.</p></div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center"><span class="text-rose-400 font-bold">3</span></div>
+              <div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600"><h4 class="font-semibold text-white mb-1">Proponha em YAML</h4><p class="text-sm text-neutral-400">Um comando novo ou uma correção vale mais como YAML de 9 campos (tópico 5) do que como sugestão em prosa.</p></div>
+            </div>
+          </div>
+          <div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden mb-6">
+            <div class="p-4 border-b border-dark-600"><h3 class="font-semibold text-rose-400">🎯 Copie e rode</h3></div>
+            <div class="p-4">
+              <pre class="font-mono text-sm bg-dark-900/70 rounded-lg p-4 overflow-x-auto text-neutral-300 whitespace-pre-wrap">/review do meu uso da INEMA Command Language neste curso: quais comandos usei mais, quais nunca usei, onde a saída surpreendeu e qual item da v0.2 resolveria cada surpresa</pre>
+              <p class="text-sm text-neutral-400 mt-3"><strong class="text-neutral-300">Como verificar:</strong> a saída lista pelo menos um comando que você nunca rodou — e ele merece uma tentativa antes de fechar a aba.</p>
+            </div>
+          </div>
+          <div class="bg-primary/10 rounded-xl border border-primary/40 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Para onde ir agora</h3>
+            <p class="text-neutral-300 text-sm">Você fechou o curso. Se voltar a uma só página, volte ao módulo 1.1 (a sintaxe e as 10 regras) e a este 6.2 — o começo e o fim são os dois lugares onde a linguagem inteira cabe numa tela.</p>
+          </div>
+          <div class="flex justify-start mt-6">
+            <button type="button" data-inema-read-toggle aria-pressed="false" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30 transition-colors">
+              <span class="inema-ico-todo" aria-hidden="true">○</span><span class="inema-ico-done hidden" aria-hidden="true">●</span>
+              <span class="inema-label-todo">Marcar como lido</span><span class="inema-label-done hidden">Lido</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- CHECAGEM -->
+        <div data-inema-check="modulo-6-2#q1" class="inema-check bg-dark-800 border border-dark-600 rounded-xl p-6 mb-12">
+          <p class="font-medium mb-4">Auto-verificação rápida (opcional): qual é a diferença entre composição em linha (/truth /gaps /rank) e /chain(/truth -> /gaps -> /rank)?</p>
+          <div class="inema-check-options space-y-2">
+            <button type="button" data-inema-check-option="0" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Nenhuma — são duas sintaxes para a mesma coisa</button>
+            <button type="button" data-inema-check-option="1" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">Em linha, todos os comandos rodam sobre o mesmo insumo; no /chain, cada um recebe a saída do anterior</button>
+            <button type="button" data-inema-check-option="2" class="block w-full text-left px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 hover:bg-dark-600 transition-colors text-sm">O /chain é mais rápido porque roda em paralelo</button>
+          </div>
+          <div data-inema-check-feedback class="mt-4 text-sm" role="status" aria-live="polite"></div>
+        </div>
+
+        <!-- RESUMO FINAL -->
+        <section class="mb-12">
+          <div class="bg-gradient-to-br from-rose-900/40 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">🎓</span> Resumo do Módulo</h2>
+            <div class="space-y-4 mb-8">
+              <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-white">Três comandos sobre os outros 97</strong><span class="text-neutral-400"> — /mode declara uma vez, /chain passa saída adiante, /preset dá nome à cadeia.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-white">Cinco receitas, um mapa</strong><span class="text-neutral-400"> — decisão, produto, agente, execução e tese — com /pushback e /eval embutidos para ninguém pular.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-white">Comando é YAML de 9 campos</strong><span class="text-neutral-400"> — output_schema, acceptance e fallback são o que separa comando de prompt.</span></div></div>
+              <div class="flex items-start space-x-3"><span class="text-rose-400 mt-1">✓</span><div><strong class="text-white">Específico vence, v0.2 formaliza</strong><span class="text-neutral-400"> — precedência por anéis; aliases, tipos, permissões e conformidade vêm na próxima versão.</span></div></div>
+            </div>
+            <div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+              <h3 class="font-semibold text-rose-400 mb-2">Você concluiu o curso:</h3>
+              <p class="text-neutral-300">Trilha 6 encerrada — e com ela as 6 trilhas e os 100 comandos da INEMA Command Language. Volte ao início para revisar o mapa completo ou abra "Minha jornada" para ver o que ficou marcado como dúvida.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Voltar para Trilha</a>
+              <a href="../../index.html" class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors">Voltar ao início do curso →</a>
+            </div>
+          </div>
+        </section>
+
+        <div data-inema-meter="trilha:6" class="inema-meter max-w-md mb-4" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 6">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Trilha 6:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+        <div data-inema-meter="curso" class="inema-meter max-w-md mb-8" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso do curso">
+          <div class="flex items-center gap-2"><span class="text-xs text-neutral-500 w-24">Curso:</span>
+            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
+            <span class="text-xs text-neutral-400 w-14" data-inema-meter-pct>0%</span>
+          </div>
+        </div>
+
+      </div><!-- /coluna principal -->
+
+      <nav data-inema-toc aria-label="Índice da página" class="hidden lg:block sticky top-24 self-start">
+        <p class="text-sm text-neutral-400 mb-2">Seção <span class="inema-toc-pos">1</span> de <span class="inema-toc-total">7</span></p>
+        <ul class="space-y-1 text-sm">
+          <li><a href="#topico-1" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">1. /mode</a></li>
+          <li><a href="#topico-2" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">2. /chain</a></li>
+          <li><a href="#topico-3" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">3. /preset</a></li>
+          <li><a href="#topico-4" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">4. As 5 receitas</a></li>
+          <li><a href="#topico-5" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">5. Estrutura YAML</a></li>
+          <li><a href="#topico-6" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">6. Precedência</a></li>
+          <li><a href="#topico-7" class="inema-toc-link block px-3 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10">7. Roadmap v0.2</a></li>
+        </ul>
+      </nav>
+      </div>
+    </div>
+    </article>
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  if (window.INEMA && INEMA.registerCheck) {
+    INEMA.registerCheck('modulo-6-2#q1', {
+      answer: 1,
+      explain: {
+        0: "Há diferença de mecanismo: em linha não há passagem de saída.",
+        1: "Exato — /chain é pipeline: o /gaps trabalha sobre o que o /truth produziu, não sobre o texto original.",
+        2: "/chain é sequencial por definição — a ordem é a essência dele. Paralelismo é assunto do /parallel."
+      }
+    });
+  }
+});
+</script>
+
+  <footer class="border-t border-dark-600 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+      <p>🧭 INEMA Command Language · Curso interativo · 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+      button.setAttribute('aria-expanded', explanation.classList.contains('active') ? 'true' : 'false');
+    }
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); } });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const htmlEl = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !htmlEl.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden'); htmlEl.classList.remove('dark');
+    } else { themeToggleLightIcon.classList.remove('hidden'); }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      htmlEl.classList.toggle('dark');
+      localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+  <script src="../../assets/learn.js"></script>
+  <script>
+    if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
+  </script>
+</body>
+</html>
