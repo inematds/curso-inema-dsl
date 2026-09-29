@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trilha 4 — Plano e Execução | INEMA Command Language</title>
-  <meta name="inema-course" content="inema-dsl">
 
-  <!-- ANTI-FOUC -->
-  <script>
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trilha 4 — Plano e Execução | INEMA Command Language</title>
+<meta content="inema-dsl" name="inema-course"/>
+<!-- ANTI-FOUC -->
+<script>
   (function () {
     try {
       var html = document.documentElement;
@@ -57,15 +57,13 @@
     }
   })();
   </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
     tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#FACC15', dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' } } } } }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/learn.css">
-
-  <script type="application/json" data-inema-manifest>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="../../assets/learn.css" rel="stylesheet"/>
+<script data-inema-manifest="" type="application/json">
 {"course":"inema-dsl","tracks":[
 {"n":"1","title":"Fundamentos","modules":[{"id":"1-1","title":"A linguagem /inema","topics":7,"href":"curso/trilha1/modulo-1-1.html"},{"id":"1-2","title":"Verdade e verificação","topics":8,"href":"curso/trilha1/modulo-1-2.html"}]},
 {"n":"2","title":"Pesquisa & Análise","modules":[{"id":"2-1","title":"Pesquisa e descoberta","topics":8,"href":"curso/trilha2/modulo-2-1.html"},{"id":"2-2","title":"Análise e síntese","topics":8,"href":"curso/trilha2/modulo-2-2.html"}]},
@@ -75,8 +73,7 @@
 {"n":"6","title":"Comunicação & Maestria","modules":[{"id":"6-1","title":"Comunicação e aprendizado","topics":8,"href":"curso/trilha6/modulo-6-1.html"},{"id":"6-2","title":"Meta-comandos e maestria","topics":7,"href":"curso/trilha6/modulo-6-2.html"}]}
 ]}
 </script>
-
-  <style>
+<style>
     body { font-family: 'Inter', sans-serif; }
     .dark body { background-color: #111827; }
     .topic-explanation { display: none; }
@@ -163,381 +160,367 @@
       .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
     }
   </style>
-</head>
-<body class="bg-dark-900 text-neutral-100 min-h-screen">
-
-  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
-
-  <nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-14">
-        <div class="flex items-center space-x-4">
-          <a href="../../index.html" class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300">
-            <span class="text-2xl">🧭</span>
-            <span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
-          </a>
-          <span class="text-neutral-600">|</span>
-          <a href="https://inema.club" target="_blank" class="text-sky-400 hover:text-sky-300 text-sm font-medium">INEMA.CLUB</a>
-          <span class="text-neutral-600">-</span>
-          <a href="https://inema.pro" target="_blank" class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium">PRO</a>
-        </div>
-        <div class="flex items-center space-x-1 sm:space-x-2">
-          <button type="button" data-inema-journey-open class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" title="Sua jornada no curso">
-            <span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
-            <span class="inema-journey-badge hidden" data-inema-journey-badge aria-hidden="true"></span>
-          </button>
-          <a href="../trilha1/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
-          <a href="../trilha2/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span></a>
-          <a href="../trilha3/index.html" class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span></a>
-          <a href="../trilha4/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10 px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Plano</a>
-          <a href="../trilha5/index.html" class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Negócio</a>
-          <a href="../trilha6/index.html" class="hidden xl:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold">Maestria</a>
-          <button id="theme-toggle" class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1">
-            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-neutral-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
+<link href="https://inematds.github.io/curso-inema-dsl/curso/trilha4/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/curso-inema-dsl/en/curso/trilha4/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/curso-inema-dsl/es/curso/trilha4/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="./" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">PT</a><a href="../../en/curso/trilha4/" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="../../es/curso/trilha4/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🧭</span>
+<span class="font-bold text-lg hidden sm:inline">INEMA DSL</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+<span class="text-neutral-600">-</span>
+<a class="text-amber-700 hover:text-amber-600 dark:text-slate-300 dark:hover:text-slate-200 text-sm font-medium" href="https://inema.pro" target="_blank">PRO</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-colors text-sm" data-inema-journey-open="" title="Sua jornada no curso" type="button">
+<span aria-hidden="true">◷</span><span class="hidden md:inline">Minha jornada</span>
+<span aria-hidden="true" class="inema-journey-badge hidden" data-inema-journey-badge=""></span>
+</button>
+<a class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html"><span class="sm:hidden">T1</span><span class="hidden sm:inline">Fundamentos</span></a>
+<a class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html"><span class="sm:hidden">T2</span><span class="hidden sm:inline">Pesquisa</span></a>
+<a class="px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html"><span class="sm:hidden">T3</span><span class="hidden sm:inline">Crítica</span></a>
+<a class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10 px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold" href="../trilha4/index.html">Plano</a>
+<a class="hidden lg:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold" href="../trilha5/index.html">Negócio</a>
+<a class="hidden xl:inline-flex px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors px-2 sm:px-3 py-1.5 rounded-lg text-sm font-semibold" href="../trilha6/index.html">Maestria</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-1" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
 <main id="conteudo">
-
-    <header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <span class="inline-block px-3 py-1 bg-amber-500/20 text-yellow-400 text-xs font-semibold rounded-full mb-4">TRILHA 4</span>
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4">📐 Plano &amp; Execução</h1>
-        <p class="text-lg text-neutral-400 max-w-3xl mb-2" data-inema-block="t4-hero-p1">Transformar decisão em plano e plano em rotina que roda sem você segurando tudo — as famílias 06 (Planejamento) e 07 (Execução). <strong class="text-yellow-400">Do objetivo ao plano executável, do plano à operação diária.</strong></p>
-        <p class="text-neutral-500 max-w-3xl">Ao fim da trilha você desenha arquiteturas, mapeia dependências, prioriza por impacto×risco e instala ciclos de revisão.</p>
-        <div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">2</div><div class="text-xs text-neutral-400">Módulos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">16</div><div class="text-xs text-neutral-400">Tópicos</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">~2h30</div><div class="text-xs text-neutral-400">Duração</div></div>
-          <div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">Intermediário</div><div class="text-xs text-neutral-400">Nível</div></div>
-        </div>
-        <div data-inema-meter="trilha:4" class="inema-meter mt-6 max-w-md" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da trilha 4">
-          <div class="flex items-center gap-3">
-            <span class="text-yellow-400 font-bold w-12" data-inema-meter-pct>0%</span>
-            <div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill></div></div>
-            <span class="text-xs text-neutral-400 w-16" data-inema-meter-frac>0 de 16</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
-      <div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 overflow-hidden">
-        <svg viewBox="0 0 1000 240" class="w-full h-auto" role="img" aria-label="Escada de execução com quatro degraus subindo da esquerda para a direita: blueprint no primeiro degrau, roadmap e dependencies no segundo, execute no terceiro e review no topo, com uma seta contínua indicando o ciclo de volta do review para o roadmap">
-          <defs>
-            <linearGradient id="t4-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
-            <filter id="t4-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <pattern id="t4-grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1.3" cy="1.3" r="1.3" fill="#fbbf24" opacity="0.10"/></pattern>
-            <marker id="t4-ah" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"/></marker>
-          </defs>
-          <rect x="0" y="0" width="1000" height="240" fill="url(#t4-grid)"/>
-          <g stroke="#f59e0b" stroke-width="2.5">
-            <rect x="60" y="170" width="180" height="46" rx="9" fill="#1f1604"/>
-            <rect x="290" y="130" width="180" height="86" rx="9" fill="#1f1604"/>
-            <rect x="520" y="90" width="180" height="126" rx="9" fill="#1f1604"/>
-            <rect x="750" y="50" width="190" height="166" rx="9" fill="#1f1604"/>
-          </g>
-          <g filter="url(#t4-glow)" stroke="#fbbf24" stroke-width="2" fill="none">
-            <rect x="75" y="182" width="150" height="26" rx="7"/><rect x="305" y="142" width="150" height="26" rx="7"/><rect x="535" y="102" width="150" height="26" rx="7"/><rect x="765" y="62" width="160" height="26" rx="7"/>
-          </g>
-          <g font-family="Inter,sans-serif" font-size="13.5" font-weight="600">
-            <text x="150" y="200" text-anchor="middle" fill="#fde68a">/blueprint</text>
-            <text x="380" y="160" text-anchor="middle" fill="#fde68a">/roadmap + deps</text>
-            <text x="610" y="120" text-anchor="middle" fill="#fde68a">/execute</text>
-            <text x="845" y="80" text-anchor="middle" fill="#fde68a">/review /monitor</text>
-          </g>
-          <g font-family="Inter,sans-serif" font-size="11" fill="#d4d4d8">
-            <text x="380" y="185" text-anchor="middle">sequência verificável</text><text x="380" y="202" text-anchor="middle">+ pré-requisitos</text>
-            <text x="610" y="145" text-anchor="middle">plano vira ação,</text><text x="610" y="162" text-anchor="middle">ação vira rotina</text>
-            <text x="845" y="105" text-anchor="middle">indicares, limiares</text><text x="845" y="122" text-anchor="middle">e revisão honesta</text>
-          </g>
-          <g fill="none" stroke="#38bdf8" stroke-width="1.6" opacity="0.65">
-            <path d="M240,175 C260,168 270,158 288,152" marker-end="url(#t4-ah)"/>
-            <path d="M470,135 C492,128 500,118 518,112" marker-end="url(#t4-ah)"/>
-            <path d="M700,95 C722,88 730,78 748,72" marker-end="url(#t4-ah)"/>
-            <path d="M850,50 C700,-15 350,-10 165,165" marker-end="url(#t4-ah)" stroke-dasharray="6 5"/>
-          </g>
-          <text x="500" y="228" text-anchor="middle" fill="#94a3b8" font-family="Inter,sans-serif" font-size="11">o review realimenta o plano — ciclo fechado, não linha reta</text>
-        </svg>
-        <p class="text-xs text-neutral-500 mt-2 text-center">A trilha sobe em degraus; o review devolve aprendizado ao próximo ciclo.</p>
-      </div>
-    </div>
-
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12">
-      <h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <a href="#modulo-4-1" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold text-sm">4.1</span><span class="text-xs text-neutral-500">~75 min</span></div>
-          <h3 class="font-semibold mb-1 group-hover:text-yellow-400 transition-colors">📐 Planejamento e arquitetura</h3>
-          <p class="text-xs text-neutral-400">Objetivo vira plano executável</p>
-        </a>
-        <a href="#modulo-4-2" class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold text-sm">4.2</span><span class="text-xs text-neutral-500">~75 min</span></div>
-          <h3 class="font-semibold mb-1 group-hover:text-yellow-400 transition-colors">🚀 Execução e operações</h3>
-          <p class="text-xs text-neutral-400">Do plano à rotina operante</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a href="modulo-4-1.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-all">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.1</span><span class="text-xs text-neutral-500">~75 min · 8 tópicos</span></div>
-          <h3 class="text-xl font-bold mb-2 group-hover:text-yellow-400 transition-colors">📐 Planejamento e arquitetura</h3>
-          <p class="text-sm text-neutral-400">De /blueprint a /checklist: roadmap, dependências, recursos, arquitetura e SOPs.</p>
-        </a>
-        <a href="modulo-4-2.html" class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-all">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.2</span><span class="text-xs text-neutral-500">~75 min · 8 tópicos</span></div>
-          <h3 class="text-xl font-bold mb-2 group-hover:text-yellow-400 transition-colors">🚀 Execução e operações</h3>
-          <p class="text-sm text-neutral-400">De /execute a /review: próxima ação, estimativa honesta, paralelização e monitoramento.</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-      <h2 class="text-2xl font-bold mb-6">Conteúdo detalhado</h2>
-
-      <div id="modulo-4-1" data-inema-module="4-1" data-inema-track="4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
-        <div class="p-6 border-b border-dark-600">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.1</span><span class="text-xs text-neutral-500">~75 min</span></div>
-          <h3 class="text-2xl font-bold mb-2">📐 Planejamento e arquitetura</h3>
-          <p class="text-neutral-400 text-sm">Os 10 comandos da família 06 — do objetivo executável à verificação sistemática.</p>
-        </div>
-        <div class="divide-y divide-dark-600">
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">🏗️</span>
-              <div><span class="font-medium">/blueprint</span><span class="text-neutral-500 text-sm ml-2">- do objetivo ao plano executável</span></div>
-            </button>
-            <div id="painel-4-1-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Converte objetivo em estrutura executável: fases, entregas e critérios de pronto por etapa.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Objetivo sem blueprint é desejo; com blueprint, é contrato com etapas verificáveis.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">fase · entrega · critério de aceite.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🗺️</span>
-              <div><span class="font-medium">/roadmap + /milestones</span><span class="text-neutral-500 text-sm ml-2">- sequência verificável</span></div>
-            </button>
-            <div id="painel-4-1-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Ordenam as fases no tempo e cravam marcos verificáveis — datas com critérios objetivos de cumprimento.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Marco sem critério é aniversário; marco com critério é ponto de decisão.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">marco verificável · sequência · janela temporal.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🔗</span>
-              <div><span class="font-medium">/dependencies</span><span class="text-neutral-500 text-sm ml-2">- mapeie pré-requisitos</span></div>
-            </button>
-            <div id="painel-4-1-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Revela o que precisa existir antes do quê — inclusive dependências externas fora do seu controle.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Caminho crítico ignorado transforma atraso pequeno em atraso total.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">caminho crítico · pré-requisito · bloqueio externo.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">👥</span>
-              <div><span class="font-medium">/resources</span><span class="text-neutral-500 text-sm ml-2">- estime pessoas, dados, orçamento</span></div>
-            </button>
-            <div id="painel-4-1-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Estima os insumos reais: gente, dados, ferramentas e dinheiro por fase.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Plano sem custo de execução é plano de marketing.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">estimativa por fase · folga · restrição de recurso.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🧱</span>
-              <div><span class="font-medium">/architecture</span><span class="text-neutral-500 text-sm ml-2">- desenhe componentes e interfaces</span></div>
-            </button>
-            <div id="painel-4-1-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Define componentes, responsabilidades e contratos entre eles — antes do código ou da contratação.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Interface mal definida cobra juros compostos durante todo o projeto.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">componente · responsabilidade · contrato entre peças.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">🔄</span>
-              <div><span class="font-medium">/workflow</span><span class="text-neutral-500 text-sm ml-2">- processo em estados e fluxos</span></div>
-            </button>
-            <div id="painel-4-1-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Modela o processo como estados e transições — cada item sabe onde está e para onde vai.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Processo sem estados gera itens "em andamento" há três meses.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">estado · transição · condição de passagem.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-7" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span><span class="text-lg">📋</span>
-              <div><span class="font-medium">/SOP</span><span class="text-neutral-500 text-sm ml-2">- procedimento padrão repetível</span></div>
-            </button>
-            <div id="painel-4-1-7" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Transforma processo recorrente em procedimento padrão escrito — executável por quem nunca fez.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">SOP é o que separa negócio que escala de negócio que depende do dono.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">passo atômico · responsável por passo · exceção tratada.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-1-8" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">8</span><span class="text-lg">✅</span>
-              <div><span class="font-medium">/checklist + /sequence</span><span class="text-neutral-500 text-sm ml-2">- verifique e otimize a ordem</span></div>
-            </button>
-            <div id="painel-4-1-8" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Geram listas de verificação para pontos de falha conhecidos e otimizam a ordem das tarefas.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Aviação usa checklist há décadas porque memória humana falha justamente na rotina.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">ponto de falha · item binário · ordem ótima.</p></div>
-            </div></div>
-          </div>
-        </div>
-        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
-          <button onclick="openModal('modal-4-1')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
-          <a href="modulo-4-1.html" class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">Ver Completo</a>
-        </div>
-      </div>
-
-      <div id="modulo-4-2" data-inema-module="4-2" data-inema-track="4" class="bg-dark-800 rounded-xl border border-dark-600 mb-6">
-        <div class="p-6 border-b border-dark-600">
-          <div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.2</span><span class="text-xs text-neutral-500">~75 min</span></div>
-          <h3 class="text-2xl font-bold mb-2">🚀 Execução e operações</h3>
-          <p class="text-neutral-400 text-sm">Os 10 comandos da família 07 — da conversão do plano em ações até a revisão contra critérios.</p>
-        </div>
-        <div class="divide-y divide-dark-600">
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-1" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">▶️</span>
-              <div><span class="font-medium">/execute</span><span class="text-neutral-500 text-sm ml-2">- converta plano em ação</span></div>
-            </button>
-            <div id="painel-4-2-1" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Transforma o plano em sequência de ações concretas, com ordem e resultado esperado por passo.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É a ponte entre a trilha de planejamento e o mundo físico onde coisas acontecem.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">passo acionável · ordem explícita · saída verificável.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-2" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">➡️</span>
-              <div><span class="font-medium">/next</span><span class="text-neutral-500 text-sm ml-2">- a próxima melhor ação</span></div>
-            </button>
-            <div id="painel-4-2-2" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Diante de tudo que poderia ser feito, aponta UMA próxima ação — a de maior valor agora.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Paralisia por excesso de opções é o gargalo mais comum de quem trabalha sozinho.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">ação única · justificativa de escolha · estado atual.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-3" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🧩</span>
-              <div><span class="font-medium">/tasks + /owner</span><span class="text-neutral-500 text-sm ml-2">- decomponha e atribua</span></div>
-            </button>
-            <div id="painel-4-2-3" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Quebra entregas em tarefas termináveis e atribui um responsável único por cada uma.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Tarefa com dois donos não tem dono; tarefa sem fim definido não termina nunca.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">tarefa terminável · dono único · definição de feito.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-4" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">⏱️</span>
-              <div><span class="font-medium">/estimate</span><span class="text-neutral-500 text-sm ml-2">- estime sem falsa precisão</span></div>
-            </button>
-            <div id="painel-4-2-4" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Produz estimativas com faixas e premissas — "2–3 dias, se X acontecer" em vez de "terça".</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Número exato demais esconde incerteza real e quebra confiança quando falha.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">faixa · premissa declarada · margem.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-5" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🎯</span>
-              <div><span class="font-medium">/priority</span><span class="text-neutral-500 text-sm ml-2">- priorize por impacto e risco</span></div>
-            </button>
-            <div id="painel-4-2-5" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Ordena a fila por impacto esperado e risco — não por quem grita mais alto.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Prioridade implícita é sempre a última urgência recebida.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">impacto × risco · fila ordenada · corte consciente.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-6" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">⚙️</span>
-              <div><span class="font-medium">/parallel + /automate</span><span class="text-neutral-500 text-sm ml-2">- paralelize e automatize</span></div>
-            </button>
-            <div id="painel-4-2-6" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Identificam o que pode rodar simultaneamente e o que merece virar automação estável.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Automação de processo instável automatiza o caos — primeiro estabilizar, depois robotizar.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">paralelizável vs serial · candidato à automação · custo de manutenção.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-7" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span><span class="text-lg">📡</span>
-              <div><span class="font-medium">/monitor</span><span class="text-neutral-500 text-sm ml-2">- indicadores e limiares</span></div>
-            </button>
-            <div id="painel-4-2-7" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Define o que observar, com que frequência e qual limiar dispara alerta ou ação.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Métrica sem limiar é decoração de dashboard; limiar define quando reagir.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">indicador · limiar · cadência de checagem.</p></div>
-            </div></div>
-          </div>
-          <div class="topic-item">
-            <button onclick="toggleTopic(this)" aria-expanded="false" aria-controls="painel-4-2-8" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left">
-              <span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">8</span><span class="text-lg">🔁</span>
-              <div><span class="font-medium">/review</span><span class="text-neutral-500 text-sm ml-2">- revise contra critérios e corrija</span></div>
-            </button>
-            <div id="painel-4-2-8" class="topic-explanation px-6 pb-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
-              <div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Compara o entregue com os critérios originais e produz correções — não apenas opiniões.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Review contra critérios fecha o ciclo aberto pelo /blueprint lá atrás.</p></div>
-              <div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">critério de aceite · lacuna · correção rastreável.</p></div>
-            </div></div>
-          </div>
-        </div>
-        <div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
-          <button onclick="openModal('modal-4-2')" class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors">Ver em Modal</button>
-          <a href="modulo-4-2.html" class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">Ver Completo</a>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-4 mt-12 mb-8">
-        <a href="../trilha3/index.html" class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors">← Trilha anterior: Crítica &amp; Decisão</a>
-        <a href="../trilha5/index.html" class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors">Próxima Trilha: Negócio &amp; IA →</a>
-      </div>
-    </section>
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-yellow-400 text-xs font-semibold rounded-full mb-4">TRILHA 4</span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">📐 Plano &amp; Execução</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2" data-inema-block="t4-hero-p1">Transformar decisão em plano e plano em rotina que roda sem você segurando tudo — as famílias 06 (Planejamento) e 07 (Execução). <strong class="text-yellow-400">Do objetivo ao plano executável, do plano à operação diária.</strong></p>
+<p class="text-neutral-500 max-w-3xl">Ao fim da trilha você desenha arquiteturas, mapeia dependências, prioriza por impacto×risco e instala ciclos de revisão.</p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">2</div><div class="text-xs text-neutral-400">Módulos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">16</div><div class="text-xs text-neutral-400">Tópicos</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">~2h30</div><div class="text-xs text-neutral-400">Duração</div></div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600"><div class="text-xl font-bold text-yellow-400">Intermediário</div><div class="text-xs text-neutral-400">Nível</div></div>
+</div>
+<div aria-label="Progresso da trilha 4" aria-valuemax="100" aria-valuemin="0" class="inema-meter mt-6 max-w-md" data-inema-meter="trilha:4" role="progressbar">
+<div class="flex items-center gap-3">
+<span class="text-yellow-400 font-bold w-12" data-inema-meter-pct="">0%</span>
+<div class="inema-bar flex-1"><div class="inema-bar__fill" data-inema-meter-fill=""></div></div>
+<span class="text-xs text-neutral-400 w-16" data-inema-meter-frac="">0 de 16</span>
+</div>
+</div>
+</div>
+</header>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 overflow-hidden">
+<svg aria-label="Escada de execução com quatro degraus subindo da esquerda para a direita: blueprint no primeiro degrau, roadmap e dependencies no segundo, execute no terceiro e review no topo, com uma seta contínua indicando o ciclo de volta do review para o roadmap" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t4-grad" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop></lineargradient>
+<filter height="180%" id="t4-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="32" id="t4-grid" patternunits="userSpaceOnUse" width="32"><circle cx="1.3" cy="1.3" fill="#fbbf24" opacity="0.10" r="1.3"></circle></pattern>
+<marker id="t4-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t4-grid)" height="240" width="1000" x="0" y="0"></rect>
+<g stroke="#f59e0b" stroke-width="2.5">
+<rect fill="#1f1604" height="46" rx="9" width="180" x="60" y="170"></rect>
+<rect fill="#1f1604" height="86" rx="9" width="180" x="290" y="130"></rect>
+<rect fill="#1f1604" height="126" rx="9" width="180" x="520" y="90"></rect>
+<rect fill="#1f1604" height="166" rx="9" width="190" x="750" y="50"></rect>
+</g>
+<g fill="none" filter="url(#t4-glow)" stroke="#fbbf24" stroke-width="2">
+<rect height="26" rx="7" width="150" x="75" y="182"></rect><rect height="26" rx="7" width="150" x="305" y="142"></rect><rect height="26" rx="7" width="150" x="535" y="102"></rect><rect height="26" rx="7" width="160" x="765" y="62"></rect>
+</g>
+<g font-family="Inter,sans-serif" font-size="13.5" font-weight="600">
+<text fill="#fde68a" text-anchor="middle" x="150" y="200">/blueprint</text>
+<text fill="#fde68a" text-anchor="middle" x="380" y="160">/roadmap + deps</text>
+<text fill="#fde68a" text-anchor="middle" x="610" y="120">/execute</text>
+<text fill="#fde68a" text-anchor="middle" x="845" y="80">/review /monitor</text>
+</g>
+<g fill="#d4d4d8" font-family="Inter,sans-serif" font-size="11">
+<text text-anchor="middle" x="380" y="185">sequência verificável</text><text text-anchor="middle" x="380" y="202">+ pré-requisitos</text>
+<text text-anchor="middle" x="610" y="145">plano vira ação,</text><text text-anchor="middle" x="610" y="162">ação vira rotina</text>
+<text text-anchor="middle" x="845" y="105">indicares, limiares</text><text text-anchor="middle" x="845" y="122">e revisão honesta</text>
+</g>
+<g fill="none" opacity="0.65" stroke="#38bdf8" stroke-width="1.6">
+<path d="M240,175 C260,168 270,158 288,152" marker-end="url(#t4-ah)"></path>
+<path d="M470,135 C492,128 500,118 518,112" marker-end="url(#t4-ah)"></path>
+<path d="M700,95 C722,88 730,78 748,72" marker-end="url(#t4-ah)"></path>
+<path d="M850,50 C700,-15 350,-10 165,165" marker-end="url(#t4-ah)" stroke-dasharray="6 5"></path>
+</g>
+<text fill="#94a3b8" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="500" y="228">o review realimenta o plano — ciclo fechado, não linha reta</text>
+</svg>
+<p class="text-xs text-neutral-500 mt-2 text-center">A trilha sobe em degraus; o review devolve aprendizado ao próximo ciclo.</p>
+</div>
+</div>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 mb-12">
+<h2 class="text-2xl font-bold mb-6">Mapa da trilha</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-4-1">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold text-sm">4.1</span><span class="text-xs text-neutral-500">~75 min</span></div>
+<h3 class="font-semibold mb-1 group-hover:text-yellow-400 transition-colors">📐 Planejamento e arquitetura</h3>
+<p class="text-xs text-neutral-400">Objetivo vira plano executável</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-4-2">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold text-sm">4.2</span><span class="text-xs text-neutral-500">~75 min</span></div>
+<h3 class="font-semibold mb-1 group-hover:text-yellow-400 transition-colors">🚀 Execução e operações</h3>
+<p class="text-xs text-neutral-400">Do plano à rotina operante</p>
+</a>
+</div>
+</section>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<a class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-all" href="modulo-4-1.html">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.1</span><span class="text-xs text-neutral-500">~75 min · 8 tópicos</span></div>
+<h3 class="text-xl font-bold mb-2 group-hover:text-yellow-400 transition-colors">📐 Planejamento e arquitetura</h3>
+<p class="text-sm text-neutral-400">De /blueprint a /checklist: roadmap, dependências, recursos, arquitetura e SOPs.</p>
+</a>
+<a class="group block bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-6 transition-all" href="modulo-4-2.html">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.2</span><span class="text-xs text-neutral-500">~75 min · 8 tópicos</span></div>
+<h3 class="text-xl font-bold mb-2 group-hover:text-yellow-400 transition-colors">🚀 Execução e operações</h3>
+<p class="text-sm text-neutral-400">De /execute a /review: próxima ação, estimativa honesta, paralelização e monitoramento.</p>
+</a>
+</div>
+</section>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+<h2 class="text-2xl font-bold mb-6">Conteúdo detalhado</h2>
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" data-inema-module="4-1" data-inema-track="4" id="modulo-4-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.1</span><span class="text-xs text-neutral-500">~75 min</span></div>
+<h3 class="text-2xl font-bold mb-2">📐 Planejamento e arquitetura</h3>
+<p class="text-neutral-400 text-sm">Os 10 comandos da família 06 — do objetivo executável à verificação sistemática.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button aria-controls="painel-4-1-1" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">🏗️</span>
+<div><span class="font-medium">/blueprint</span><span class="text-neutral-500 text-sm ml-2">- do objetivo ao plano executável</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-1"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Converte objetivo em estrutura executável: fases, entregas e critérios de pronto por etapa.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Objetivo sem blueprint é desejo; com blueprint, é contrato com etapas verificáveis.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">fase · entrega · critério de aceite.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-2" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">🗺️</span>
+<div><span class="font-medium">/roadmap + /milestones</span><span class="text-neutral-500 text-sm ml-2">- sequência verificável</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-2"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Ordenam as fases no tempo e cravam marcos verificáveis — datas com critérios objetivos de cumprimento.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Marco sem critério é aniversário; marco com critério é ponto de decisão.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">marco verificável · sequência · janela temporal.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-3" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🔗</span>
+<div><span class="font-medium">/dependencies</span><span class="text-neutral-500 text-sm ml-2">- mapeie pré-requisitos</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-3"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Revela o que precisa existir antes do quê — inclusive dependências externas fora do seu controle.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Caminho crítico ignorado transforma atraso pequeno em atraso total.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">caminho crítico · pré-requisito · bloqueio externo.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-4" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">👥</span>
+<div><span class="font-medium">/resources</span><span class="text-neutral-500 text-sm ml-2">- estime pessoas, dados, orçamento</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Estima os insumos reais: gente, dados, ferramentas e dinheiro por fase.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Plano sem custo de execução é plano de marketing.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">estimativa por fase · folga · restrição de recurso.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-5" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🧱</span>
+<div><span class="font-medium">/architecture</span><span class="text-neutral-500 text-sm ml-2">- desenhe componentes e interfaces</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-5"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Define componentes, responsabilidades e contratos entre eles — antes do código ou da contratação.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Interface mal definida cobra juros compostos durante todo o projeto.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">componente · responsabilidade · contrato entre peças.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-6" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">🔄</span>
+<div><span class="font-medium">/workflow</span><span class="text-neutral-500 text-sm ml-2">- processo em estados e fluxos</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-6"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Modela o processo como estados e transições — cada item sabe onde está e para onde vai.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Processo sem estados gera itens "em andamento" há três meses.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">estado · transição · condição de passagem.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-7" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span><span class="text-lg">📋</span>
+<div><span class="font-medium">/SOP</span><span class="text-neutral-500 text-sm ml-2">- procedimento padrão repetível</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-7"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Transforma processo recorrente em procedimento padrão escrito — executável por quem nunca fez.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">SOP é o que separa negócio que escala de negócio que depende do dono.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">passo atômico · responsável por passo · exceção tratada.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-1-8" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">8</span><span class="text-lg">✅</span>
+<div><span class="font-medium">/checklist + /sequence</span><span class="text-neutral-500 text-sm ml-2">- verifique e otimize a ordem</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-1-8"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Geram listas de verificação para pontos de falha conhecidos e otimizam a ordem das tarefas.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Aviação usa checklist há décadas porque memória humana falha justamente na rotina.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">ponto de falha · item binário · ordem ótima.</p></div>
+</div></div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-4-1')">Ver em Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-4-1.html">Ver Completo</a>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" data-inema-module="4-2" data-inema-track="4" id="modulo-4-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2"><span class="text-yellow-400 font-bold">4.2</span><span class="text-xs text-neutral-500">~75 min</span></div>
+<h3 class="text-2xl font-bold mb-2">🚀 Execução e operações</h3>
+<p class="text-neutral-400 text-sm">Os 10 comandos da família 07 — da conversão do plano em ações até a revisão contra critérios.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button aria-controls="painel-4-2-1" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span><span class="text-lg">▶️</span>
+<div><span class="font-medium">/execute</span><span class="text-neutral-500 text-sm ml-2">- converta plano em ação</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-1"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Transforma o plano em sequência de ações concretas, com ordem e resultado esperado por passo.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">É a ponte entre a trilha de planejamento e o mundo físico onde coisas acontecem.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">passo acionável · ordem explícita · saída verificável.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-2" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span><span class="text-lg">➡️</span>
+<div><span class="font-medium">/next</span><span class="text-neutral-500 text-sm ml-2">- a próxima melhor ação</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-2"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Diante de tudo que poderia ser feito, aponta UMA próxima ação — a de maior valor agora.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Paralisia por excesso de opções é o gargalo mais comum de quem trabalha sozinho.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">ação única · justificativa de escolha · estado atual.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-3" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span><span class="text-lg">🧩</span>
+<div><span class="font-medium">/tasks + /owner</span><span class="text-neutral-500 text-sm ml-2">- decomponha e atribua</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-3"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Quebra entregas em tarefas termináveis e atribui um responsável único por cada uma.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Tarefa com dois donos não tem dono; tarefa sem fim definido não termina nunca.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">tarefa terminável · dono único · definição de feito.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-4" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span><span class="text-lg">⏱️</span>
+<div><span class="font-medium">/estimate</span><span class="text-neutral-500 text-sm ml-2">- estime sem falsa precisão</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-4"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Produz estimativas com faixas e premissas — "2–3 dias, se X acontecer" em vez de "terça".</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Número exato demais esconde incerteza real e quebra confiança quando falha.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">faixa · premissa declarada · margem.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-5" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span><span class="text-lg">🎯</span>
+<div><span class="font-medium">/priority</span><span class="text-neutral-500 text-sm ml-2">- priorize por impacto e risco</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-5"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Ordena a fila por impacto esperado e risco — não por quem grita mais alto.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Prioridade implícita é sempre a última urgência recebida.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">impacto × risco · fila ordenada · corte consciente.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-6" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span><span class="text-lg">⚙️</span>
+<div><span class="font-medium">/parallel + /automate</span><span class="text-neutral-500 text-sm ml-2">- paralelize e automatize</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-6"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Identificam o que pode rodar simultaneamente e o que merece virar automação estável.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Automação de processo instável automatiza o caos — primeiro estabilizar, depois robotizar.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">paralelizável vs serial · candidato à automação · custo de manutenção.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-7" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span><span class="text-lg">📡</span>
+<div><span class="font-medium">/monitor</span><span class="text-neutral-500 text-sm ml-2">- indicadores e limiares</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-7"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Define o que observar, com que frequência e qual limiar dispara alerta ou ação.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Métrica sem limiar é decoração de dashboard; limiar define quando reagir.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">indicador · limiar · cadência de checagem.</p></div>
+</div></div>
+</div>
+<div class="topic-item">
+<button aria-controls="painel-4-2-8" aria-expanded="false" class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-yellow-400 text-sm font-bold flex items-center justify-center flex-shrink-0">8</span><span class="text-lg">🔁</span>
+<div><span class="font-medium">/review</span><span class="text-neutral-500 text-sm ml-2">- revise contra critérios e corrija</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4" id="painel-4-2-8"><div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-yellow-400 font-semibold">O que é:</span><p class="text-neutral-300 text-sm">Compara o entregue com os critérios originais e produz correções — não apenas opiniões.</p></div>
+<div><span class="text-yellow-400 font-semibold">Por que aprender:</span><p class="text-neutral-300 text-sm">Review contra critérios fecha o ciclo aberto pelo /blueprint lá atrás.</p></div>
+<div><span class="text-yellow-400 font-semibold">Conceitos-chave:</span><p class="text-neutral-300 text-sm">critério de aceite · lacuna · correção rastreável.</p></div>
+</div></div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-4-2')">Ver em Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-4-2.html">Ver Completo</a>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 mt-12 mb-8">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../trilha3/index.html">← Trilha anterior: Crítica &amp; Decisão</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="../trilha5/index.html">Próxima Trilha: Negócio &amp; IA →</a>
+</div>
+</section>
 </main>
-
-<div id="modal-4-1" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
-  <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
-    <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
-      <div class="flex items-center space-x-3"><span class="text-yellow-400 font-bold">4.1</span><span class="font-semibold">Planejamento e arquitetura</span></div>
-      <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
-    </div>
-    <iframe src="modulo-4-1.html" title="Módulo 4.1" class="flex-1 w-full rounded-b-xl"></iframe>
-  </div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-4-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3"><span class="text-yellow-400 font-bold">4.1</span><span class="font-semibold">Planejamento e arquitetura</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
 </div>
-<div id="modal-4-2" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" onclick="if(event.target === this) closeModal()">
-  <div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
-    <div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
-      <div class="flex items-center space-x-3"><span class="text-yellow-400 font-bold">4.2</span><span class="font-semibold">Execução e operações</span></div>
-      <button onclick="closeModal()" class="text-neutral-400 hover:text-white text-2xl leading-none">&times;</button>
-    </div>
-    <iframe src="modulo-4-2.html" title="Módulo 4.2" class="flex-1 w-full rounded-b-xl"></iframe>
-  </div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-4-1.html" title="Módulo 4.1"></iframe>
 </div>
-
-  <footer class="border-t border-dark-600 py-8 mt-16">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
-      <p>🧭 INEMA Command Language · Curso interativo · 2026</p>
-    </div>
-  </footer>
-
-  <script>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-4-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3"><span class="text-yellow-400 font-bold">4.2</span><span class="font-semibold">Execução e operações</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-4-2.html" title="Módulo 4.2"></iframe>
+</div>
+</div>
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>🧭 INEMA Command Language · Curso interativo · 2026</p>
+</div>
+</footer>
+<script>
     function toggleTopic(button) {
       const topicItem = button.closest('.topic-item');
       const explanation = topicItem.querySelector('.topic-explanation');
@@ -572,8 +555,8 @@
       localStorage.setItem('theme', htmlEl.classList.contains('dark') ? 'dark' : 'light');
     });
   </script>
-  <script src="../../assets/learn.js"></script>
-  <script>
+<script src="../../assets/learn.js"></script>
+<script>
     if (window.INEMA && typeof window.INEMA.init === 'function') { window.INEMA.init(); }
   </script>
 </body>
